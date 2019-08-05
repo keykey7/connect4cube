@@ -15,6 +15,7 @@ class RuleViolation(Exception):
 class Game:
     LOG = logging.getLogger(__name__)
     DIR = list(product([0, 1], repeat=3))
+    DIR.pop(0)
 
     def __init__(self):
         self.cube = np.full((5, 5, 5), EMPTY)
@@ -27,27 +28,34 @@ class Game:
             z += 1
         if z == 5:
             raise RuleViolation("already full at {},{}".format(x, y))
-        self.cube[x, y, z] = self.next
+        current = self.next
+        self.cube[x, y, z] = current
         self.next = RED if self.next == BLUE else BLUE
+        return self.is_winning(x, y, z, current)
 
     def field(self, x, y, z):
         assert 0 <= x < 5 and 0 <= y < 5 and 0 <= z < 5
         return self.cube[x, y, z]
 
-    def winner(self):
-        redo this...
-
-
-        for p0 in self.DIR:
-            color0 = self.cube[p0]
-            if color0 == EMPTY:
-                break
-            for direction in self.DIR:
-                p = p0
-                for i in range(4):  # three more with same color
-                    p = (p[0] + direction[0], p[1] + direction[1], p[2] + direction[2])
-                    if color0 != self.cube[p]:
-                        break
-                    if i == 3:
-                        return color0
-        return EMPTY
+    def is_winning(self, x, y, z, color):
+        for d in self.DIR:
+            p = (x, y, z)
+            i = 0
+            for i in range(3):
+                p = (p[0] + d[0], p[1] + d[1], p[2] + d[2])
+                if p[0] > 5 or p[1] > 5 or p[2] > 5:
+                    break
+                if color != self.cube[p]:
+                    break
+                if i == 2:
+                    return True
+            p = (x, y, z)
+            for i in range(i, 3):
+                p = (p[0] - d[0], p[1] - d[1], p[2] - d[2])
+                if 0 > p[0] or 0 > p[1] or 0 > p[2]:
+                    break
+                if color != self.cube[p]:
+                    break
+                if i == 2:
+                    return True
+        return False

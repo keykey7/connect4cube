@@ -26,11 +26,17 @@ def test_alternating_players():
     assert game.field(1, 1, 0) == BLUE
 
 
-def test_win():
+def test_win_backward():
     game = Game()
     for i in range(3):
-        game.move(i, 0)
-        game.move(i, 0)
-        assert game.winner() == EMPTY
-    game.move(3, 0)
-    assert game.winner() == RED
+        assert not game.move(i, 0)
+        assert not game.move(i, 0)
+    assert game.move(3, 0)
+
+
+def test_win_forward():
+    game = Game()
+    for i in range(3, 0, -1):
+        assert not game.move(i, 0)
+        assert not game.move(i, 0)
+    assert game.move(0, 0)
