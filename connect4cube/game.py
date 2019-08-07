@@ -1,61 +1,47 @@
-import logging
-from itertools import permutations, combinations_with_replacement, product
+import typing
+from enum import Enum
 
-import numpy as np
+from connect4cube.simple_board import POS_DIRECTIONS, Board, EMPTY
 
-EMPTY = 0
-RED = 1
-BLUE = 2
+
+MAX_ROUND = 5*5*5 - 1
+
+
+class Winner(Enum):
+    RED = 0
+    BLUE = 1
+    DRAW = 2
 
 
 class RuleViolation(Exception):
     pass
 
 
+class Player:
+    def __init__(self, board: Board):
+        self.board = board
+
+    def play(self, other_move: typing.Optional[tuple]) -> tuple:
+        raise NotImplementedError
+
+
 class Game:
-    LOG = logging.getLogger(__name__)
-    DIR = list(product([0, 1], repeat=3))
-    DIR.pop(0)
+    def __init__(self, player_red: Player, player_blue: Player):
+        self.player_red = player_red
+        self.player_blue = player_blue
+        self.current = player_red
 
-    def __init__(self):
-        self.cube = np.full((5, 5, 5), EMPTY)
-        self.next = RED
-
-    def move(self, x, y):
-        assert 0 <= x < 5 and 0 <= y < 5
-        z = 0
-        while z < 5 and self.cube[x, y, z] != EMPTY:
-            z += 1
-        if z == 5:
-            raise RuleViolation("already full at {},{}".format(x, y))
-        current = self.next
-        self.cube[x, y, z] = current
-        self.next = RED if self.next == BLUE else BLUE
-        return self.is_winning(x, y, z, current)
-
-    def field(self, x, y, z):
-        assert 0 <= x < 5 and 0 <= y < 5 and 0 <= z < 5
-        return self.cube[x, y, z]
-
-    def is_winning(self, x, y, z, color):
-        for d in self.DIR:
-            p = (x, y, z)
-            i = 0
-            for i in range(3):
-                p = (p[0] + d[0], p[1] + d[1], p[2] + d[2])
-                if p[0] > 5 or p[1] > 5 or p[2] > 5:
-                    break
-                if color != self.cube[p]:
-                    break
-                if i == 2:
-                    return True
-            p = (x, y, z)
-            for i in range(i, 3):
-                p = (p[0] - d[0], p[1] - d[1], p[2] - d[2])
-                if 0 > p[0] or 0 > p[1] or 0 > p[2]:
-                    break
-                if color != self.cube[p]:
-                    break
-                if i == 2:
-                    return True
-        return False
+    def play(self) -> Winner:
+        board = Board()
+        last_move = None
+        while board.round <= MAX_ROUND:
+            move = self.current.play(last_move)
+            if 0 > move[0] > 4 or 0 > move[1] > 4:
+                raise RuleViolation("out of bounds move")
+            if board.field(move[0], move[1], 4) != EMPTY:
+                raise RuleViolation("already full at {},{}".format(move))
+            is_winning = board.move(move)
+            if is_winning:
+                return Winner.RED if self.current is self.player_red else Winner.BLUE
+            self.current = self.player_red if self.current is self.player_blue else self.player_red
+        return Winner.DRAW
