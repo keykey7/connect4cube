@@ -1,5 +1,5 @@
-import typing
-from random import randint, Random, random
+import sys
+from random import Random
 
 from connect4cube.simple_board import Board, EMPTY
 
@@ -36,3 +36,23 @@ class RandomPlayer(BasePlayer):
             y = self.rand.randint(0, 4)
             if self.board.field(x, y, 4) == EMPTY:
                 return x, y
+
+
+class StdinPlayer(BasePlayer):
+    def do_play(self) -> tuple:
+        print(self.board)
+        switcher = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, '0': 0, '1': 1, '2': 2, '3': 3, '4': 4}
+        while True:
+            s = input("move> ").lower()
+            if len(s) != 2:
+                sys.stderr.write("expected 2 digits, like 'A0', retry\n")
+                continue
+            x = switcher.get(s[0], -1)
+            y = switcher.get(s[1], -1)
+            if x < 0 or y < 0:
+                sys.stderr.write("invalid digit, try something like 'A0', retry\n")
+                continue
+            if self.board.field(x, y, 4) != EMPTY:
+                sys.stderr.write("invalid move, column is already full, retry\n")
+                continue
+            return x, y

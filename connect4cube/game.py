@@ -1,6 +1,6 @@
 from enum import Enum
 
-from connect4cube.player import Player
+from connect4cube.player import Player, RandomPlayer, StdinPlayer
 from connect4cube.simple_board import Board, EMPTY
 
 
@@ -39,3 +39,7 @@ class Game:
             self.current = self.player_red if self.current is self.player_blue else self.player_blue
             (last_x, last_y) = (x, y)
         return Winner.DRAW
+
+
+if __name__ == "__main__":
+    Game(RandomPlayer(), StdinPlayer()).play()
