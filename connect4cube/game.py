@@ -1,7 +1,7 @@
-import typing
 from enum import Enum
 
-from connect4cube.simple_board import POS_DIRECTIONS, Board, EMPTY
+from connect4cube.player import Player
+from connect4cube.simple_board import Board, EMPTY
 
 
 MAX_ROUND = 5*5*5 - 1
@@ -17,14 +17,6 @@ class RuleViolation(Exception):
     pass
 
 
-class Player:
-    def __init__(self, board: Board):
-        self.board = board
-
-    def play(self, other_move: typing.Optional[tuple]) -> tuple:
-        raise NotImplementedError
-
-
 class Game:
     def __init__(self, player_red: Player, player_blue: Player):
         self.player_red = player_red
@@ -33,15 +25,17 @@ class Game:
 
     def play(self) -> Winner:
         board = Board()
-        last_move = None
+        last_x = None
+        last_y = None
         while board.round <= MAX_ROUND:
-            move = self.current.play(last_move)
-            if 0 > move[0] > 4 or 0 > move[1] > 4:
+            (x, y) = self.current.play(last_x, last_y)
+            if 0 > x > 4 or 0 > y > 4:
                 raise RuleViolation("out of bounds move")
-            if board.field(move[0], move[1], 4) != EMPTY:
-                raise RuleViolation("already full at {},{}".format(move))
-            is_winning = board.move(move)
+            if board.field(x, y, 4) != EMPTY:
+                raise RuleViolation("already full at {},{}".format(x, y))
+            is_winning = board.move(x, y)
             if is_winning:
                 return Winner.RED if self.current is self.player_red else Winner.BLUE
-            self.current = self.player_red if self.current is self.player_blue else self.player_red
+            self.current = self.player_red if self.current is self.player_blue else self.player_blue
+            (last_x, last_y) = (x, y)
         return Winner.DRAW

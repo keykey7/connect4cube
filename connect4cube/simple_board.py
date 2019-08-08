@@ -16,6 +16,28 @@ class Board:
         self.next_color = RED
         self.round = 0
 
+    def __str__(self):
+        switcher = {
+            RED: '\033[31m' + "○ " + '\033[30m',
+            BLUE: '\033[34m' + "● " + '\033[30m',
+            EMPTY: '\033[37m' + "· " + '\033[30m'
+        }
+        s = "  y →         z↑1         z↑2         z↑3          🤔{} #{}\n"\
+            .format(switcher.get(self.next_color), self.round)
+        for x in range(5):
+            for z in range(5):
+                if z == 0 and x == 0:
+                    s += "x "
+                elif z == 0 and x == 1:
+                    s += "↓ "
+                else:
+                    s += "  "
+                for y in range(5):
+                    v = self.cube[x][y][z]
+                    s += switcher.get(v, "{}?".format(v))
+            s += "\n"
+        return s
+
     def move(self, x, y) -> bool:
         assert 0 <= x < 5 and 0 <= y < 5
         z = 0
