@@ -1,6 +1,7 @@
 from connect4cube.game import Game, Winner
 from connect4cube.player import RandomPlayer
-from connect4cube.simple_board import RED, BLUE, EMPTY, Board
+from connect4cube.simple_board import Board
+from connect4cube import RED, BLUE, EMPTY
 
 
 def test_alternating_players():

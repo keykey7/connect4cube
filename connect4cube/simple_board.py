@@ -1,9 +1,8 @@
 import logging
 from itertools import product
 
-RED = 0
-BLUE = 1
-EMPTY = 2
+from connect4cube import RED, BLUE, EMPTY
+
 POS_DIRECTIONS = list(product([0, 1], repeat=3))
 POS_DIRECTIONS.pop(0)  # (0,0,0) isn't a valid move direction
 
@@ -17,26 +16,8 @@ class Board:
         self.round = 0
 
     def __str__(self):
-        switcher = {
-            RED: '\033[31m' + "○ " + '\033[30m',
-            BLUE: '\033[34m' + "● " + '\033[30m',
-            EMPTY: '\033[37m' + "· " + '\033[30m'
-        }
-        s = "  y →         z↑1         z↑2         z↑3          🤔{} #{}\n"\
-            .format(switcher.get(self.next_color), self.round)
-        for x in range(5):
-            for z in range(5):
-                if z == 0 and x == 0:
-                    s += "x "
-                elif z == 0 and x == 1:
-                    s += "↓ "
-                else:
-                    s += "  "
-                for y in range(5):
-                    v = self.cube[x][y][z]
-                    s += switcher.get(v, "{}?".format(v))
-            s += "\n"
-        return s
+        from connect4cube.viewer import StdoutViewer  # otherwise circular
+        return StdoutViewer(self, ansi=False).draw_str()
 
     def move(self, x, y) -> bool:
         assert 0 <= x < 5 and 0 <= y < 5

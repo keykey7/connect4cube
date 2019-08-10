@@ -1,7 +1,8 @@
 import sys
 from random import Random
 
-from connect4cube.simple_board import Board, EMPTY
+from connect4cube.simple_board import Board
+from connect4cube import EMPTY
 
 
 class Player:

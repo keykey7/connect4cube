@@ -1,8 +1,8 @@
 from enum import Enum
 
 from connect4cube.player import Player, RandomPlayer, StdinPlayer
-from connect4cube.simple_board import Board, EMPTY
-
+from connect4cube.simple_board import Board
+from connect4cube import EMPTY
 
 MAX_ROUND = 5*5*5 - 1
 
