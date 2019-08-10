@@ -1,7 +1,7 @@
-from connect4cube.game import Game, Winner
-from connect4cube.player import RandomPlayer
-from connect4cube.simple_board import Board
 from connect4cube import RED, BLUE, EMPTY
+from connect4cube.board import Board
+from connect4cube.game import Game
+from connect4cube.player import RandomPlayer
 
 
 def test_alternating_players():
@@ -35,9 +35,9 @@ def test_win_forward():
 
 def test_random_game():
     game = Game(RandomPlayer(0), RandomPlayer(1))
-    assert game.play() is Winner.BLUE
+    assert game.play() == BLUE
     game = Game(RandomPlayer(0), RandomPlayer(4))
-    assert game.play() is Winner.RED
+    assert game.play() == RED
 
 
 def test_draw():
@@ -53,4 +53,3 @@ def test_tostr():
     board.move(3, 3)
     print("\n")
     print(board)
-

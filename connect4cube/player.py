@@ -1,16 +1,22 @@
 import sys
 from random import Random
 
-from connect4cube.simple_board import Board
+from connect4cube.board import Board
 from connect4cube import EMPTY
 
 
 class Player:
     def play(self, other_x, other_y) -> tuple:
+        """
+        :param other_x: x-coordinate of the previous opponents move or None
+        :param other_y: see x
+        :return: a tuple (x, y) of the location to play to
+        """
         raise NotImplementedError
 
 
 class BasePlayer(Player):
+    """ Abstract player backed by a simple board """
     def __init__(self):
         self.board = Board()
 
@@ -33,6 +39,7 @@ class RandomPlayer(BasePlayer):
 
     def do_play(self) -> tuple:
         while True:
+            # yeah, alternatively we could collect all valid moves and then pick a random one
             x = self.rand.randint(0, 4)
             y = self.rand.randint(0, 4)
             if self.board.field(x, y, 4) == EMPTY:

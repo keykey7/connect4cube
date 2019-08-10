@@ -1,6 +1,6 @@
 from vpython import sphere, vector, color
 
-from connect4cube.simple_board import Board
+from connect4cube.board import Board
 from connect4cube import RED, BLUE
 from connect4cube.viewer import BoardViewer
 

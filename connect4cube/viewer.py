@@ -6,7 +6,7 @@ class BoardViewer:
         self.board = board
 
     def draw(self):
-        raise NotImplementedError
+        pass
 
     def player_plays(self, x, y):
         self.draw()
@@ -23,13 +23,13 @@ class StdoutViewer(BoardViewer):
         super().__init__(board)
         self.ansi = ansi
 
-    def draw_str(self):
+    def draw_str(self, select_coords=None):
         if self.ansi:
             header = "  y →         z↑1         z↑2         z↑3          🤔{} #{}\n"
             switcher = {
-                RED: '\033[31m' + "○ " + '\033[30m',
-                BLUE: '\033[34m' + "● " + '\033[30m',
-                EMPTY: '\033[37m' + "· " + '\033[30m'
+                RED: '\033[31m○\033[39m ',
+                BLUE: '\033[34m●\033[39m ',
+                EMPTY: '\033[37m·\033[39m '
             }
         else:
             header = "  Y->         Z1          Z2          Z3            !{} #{}\n"
@@ -49,9 +49,25 @@ class StdoutViewer(BoardViewer):
                     s += "  "
                 for y in range(5):
                     v = self.board.field(x, y, z)
-                    s += switcher.get(v, "{}?".format(v))
+                    vs = switcher.get(v, "{}?".format(v))
+                    if select_coords is not None and [x, y, z] in select_coords:
+                        s = s[:-1]  # need the previous space
+                        if self.ansi:
+                            vs = '\033[47m ' + vs + '\033[49m'
+                        else:
+                            vs = "[" + vs[0] + "]"
+                    s += vs
             s += "\n"
         return s
 
     def draw(self):
         print(self.draw_str())
+
+    def player_plays(self, x, y):
+        z = 4
+        while z >= 0 and self.board.field(x, y, z) == EMPTY:
+            z -= 1
+        print(self.draw_str([[x, y, z]]))
+
+    def finish(self, winning_coords):
+        print(self.draw_str(winning_coords))
