@@ -48,7 +48,6 @@ class RandomPlayer(BasePlayer):
 
 class StdinPlayer(BasePlayer):
     def do_play(self) -> tuple:
-        print(self.board)
         switcher = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, '0': 0, '1': 1, '2': 2, '3': 3, '4': 4}
         while True:
             s = input("move> ").lower()

@@ -3,7 +3,7 @@ from enum import Enum
 from connect4cube.player import Player, RandomPlayer, StdinPlayer
 from connect4cube.board import Board
 from connect4cube import EMPTY, RED, BLUE
-from connect4cube.viewer import StdoutViewer
+from connect4cube.viewer import StdoutViewer, AnsiStdoutViewer
 
 MAX_ROUND = 5*5*5 - 1
 
@@ -18,7 +18,7 @@ class Game:
 
     def play(self) -> int:
         board = Board()
-        viewer = StdoutViewer(board)
+        viewer = AnsiStdoutViewer(board)
         viewer.draw()
         last_x = None
         last_y = None

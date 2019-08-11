@@ -18,7 +18,7 @@ class Board:
 
     def __str__(self):
         from connect4cube.viewer import StdoutViewer  # otherwise circular deps
-        return StdoutViewer(self, ansi=False).draw_str()
+        return StdoutViewer(self).draw_str()
 
     def move(self, x, y) -> bool:
         assert self.winning_move is None

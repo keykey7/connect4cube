@@ -6,10 +6,11 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 pytest-cov = "*"
+vpython = "*"
 
 [packages]
 coloredlogs = "*"
-vpython = "*"
+adafruit-ws2801 = "*"
 
 [requires]
 python_version = "3.7"
