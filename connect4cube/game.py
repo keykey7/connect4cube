@@ -35,6 +35,7 @@ class Game:
                 viewer.finish(board.winning_coords())
                 return current_color
             (last_x, last_y) = (x, y)
+        viewer.finish([])
         return EMPTY
 
 
