@@ -5,7 +5,7 @@ from connect4cube.viewer_led import LedViewer
 
 
 class VPythonViewer(LedViewer):
-    no_color = color.gray(200)
+    no_color = color.gray(0.5)
 
     def __init__(self, board):
         super().__init__(board, pixel_count=0)
@@ -27,9 +27,7 @@ class VPythonViewer(LedViewer):
 
     def set_color(self, x, y, z, r, g, b):
         pxid = self.xyz2pxid(x, y, z)
-        if (r, g, b) == (0, 0, 0):
-             (r, g, b) = (0.5, 0.5, 0.5)
-        self.pixels[pxid].color = vector(r, g, b)
+        self.pixels[pxid].color = vector(r, g, b) / 2 + self.no_color
 
     def show(self):
         pass
