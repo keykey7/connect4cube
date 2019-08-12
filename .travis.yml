@@ -7,3 +7,4 @@ install:
   - pipenv install --dev --three
 script:
   - pytest --cov=connect4cube --cov-report=xml
+  - flake8

@@ -1,11 +1,9 @@
-from enum import Enum
-
-from connect4cube.player import Player, RandomPlayer, StdinPlayer
+from connect4cube import EMPTY
 from connect4cube.board import Board
-from connect4cube import EMPTY, RED, BLUE
-from connect4cube.viewer import StdoutViewer, AnsiStdoutViewer
+from connect4cube.player import Player, RandomPlayer, StdinPlayer
+from connect4cube.viewer import AnsiStdoutViewer
 
-MAX_ROUND = 5*5*5 - 1
+MAX_ROUND = 5 * 5 * 5 - 1
 
 
 class RuleViolation(Exception):

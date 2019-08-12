@@ -1,13 +1,11 @@
 import logging
 import sys
 
+from connect4cube.game import Game
+from connect4cube.player import StdinPlayer, RandomPlayer
+
 logger = logging.getLogger(__name__)
 logger.debug("sys.path=" + ":".join(sys.path))
 
-
-def main():
-    print("now we're talking!")
-
-
 if __name__ == "__main__":
-    main()  # dear intellij: simply give me a quick play button here :)
+    Game(RandomPlayer(), StdinPlayer()).play()

@@ -72,4 +72,3 @@ class Board:
         for i in range(4):
             result.append([x + dx * i, y + dy * i, z + dz * i])
         return result
-

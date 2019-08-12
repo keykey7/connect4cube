@@ -1,4 +1,4 @@
-from vpython import sphere, vector, canvas, color, textures
+from vpython import sphere, vector, canvas, color
 
 from connect4cube.board import Board
 from connect4cube.viewer_led import LedViewer
