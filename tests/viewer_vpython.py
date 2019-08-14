@@ -5,6 +5,9 @@ from connect4cube.viewer_led import LedViewer
 
 
 class VPythonViewer(LedViewer):
+    """
+    A Mockup class for local pingping LED debugging
+    """
     no_color = color.gray(0.5)
 
     def __init__(self, board):

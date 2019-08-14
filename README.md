@@ -1,12 +1,13 @@
 # Connect Four Cube
 
+[![Build Status](https://travis-ci.com/keykey7/connect4cube.svg?branch=master)](https://travis-ci.com/keykey7/connect4cube)
+[![License](https://img.shields.io/badge/licence-GPLv3-blue)](LICENSE)
+
 A 3D connect four game ("4 gewinnt").
 
-### Bootrstap dependencies
+### Getting Started
 * `python3.7`
 * `pipenv` as package manager (`pip install --user pipenv`)
-
-### Getting Started
 * PyCharm: [Configure pipenv](https://www.jetbrains.com/help/pycharm/pipenv.html) 
 * Shell:
     ```bash
@@ -14,3 +15,12 @@ A 3D connect four game ("4 gewinnt").
     pipenv shell
     python3 -m connect4cube
     ```
+
+### Testing
+```bash
+pytest
+```
+Running the VPython 3D mockup:
+```bash
+PYTHONPATH=$(pwd) python tests/viewer_vpython.py
+```

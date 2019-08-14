@@ -1,7 +1,7 @@
 from connect4cube import EMPTY
 from connect4cube.board import Board
 from connect4cube.player import Player, RandomPlayer, StdinPlayer
-from connect4cube.viewer import AnsiStdoutViewer
+from connect4cube.viewer import AnsiStdoutViewer, BoardViewer
 
 MAX_ROUND = 5 * 5 * 5 - 1
 
@@ -11,12 +11,13 @@ class RuleViolation(Exception):
 
 
 class Game:
-    def __init__(self, player_red: Player, player_blue: Player):
+    def __init__(self, player_red: Player, player_blue: Player, viewer=AnsiStdoutViewer):
         self.players = [player_red, player_blue]
+        self.viewer_factory = viewer
 
     def play(self) -> int:
         board = Board()
-        viewer = AnsiStdoutViewer(board)
+        viewer = self.viewer_factory(board)
         viewer.draw()
         last_x = None
         last_y = None
