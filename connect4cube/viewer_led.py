@@ -1,6 +1,6 @@
 import Adafruit_WS2801
 
-from connect4cube import RED, BLUE
+from connect4cube import RED, BLUE, EMPTY
 from connect4cube.viewer import BoardViewer
 
 
@@ -28,16 +28,49 @@ class LedViewer(BoardViewer):
     def show(self):
         self.pixels.show()
 
-    def draw(self):
+    def paint(self):
+        self.set_board_colors()
+        self.show()
+
+    def player_plays(self, x, y):
+        # TODO: obviously we want an animation here :)
+        self.set_board_colors()
+        z = 4
+        while z >= 0 and self.board.field(x, y, z) == EMPTY:
+            z -= 1
+        value = self.board.field(x, y, z)
+        if value == RED:
+            color = (255, 0, 0)
+        elif value == BLUE:
+            color = (0, 0, 255)
+        else:
+            raise AssertionError()
+        self.set_color(x, y, z, *color)
+        self.show()
+
+    def player_selects(self, x, y):
+        self.set_board_colors()
+        if self.board.field(x, y, 4) != EMPTY:
+            # unplayable
+            self.set_color(x, y, 4, 0, 50, 0)
+        else:
+            z = 4
+            while z >= 0 and self.board.field(x, y, z) == EMPTY:
+                self.set_color(x, y, z, 0, 155, 0)
+                z -= 1
+            z += 1
+            self.set_color(x, y, z, 0, 255, 0)
+        self.show()
+
+    def set_board_colors(self):
         for x in range(5):
             for y in range(5):
                 for z in range(5):
                     value = self.board.field(x, y, z)
                     if value == RED:
-                        color = (255, 0, 0)
+                        color = (150, 0, 0)
                     elif value == BLUE:
-                        color = (0, 0, 255)
+                        color = (0, 0, 150)
                     else:
                         color = (0, 0, 0)
                     self.set_color(x, y, z, *color)
-        self.show()

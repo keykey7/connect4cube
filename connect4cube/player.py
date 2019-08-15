@@ -1,5 +1,6 @@
 import sys
 from random import Random
+from time import sleep
 
 from connect4cube.board import Board
 from connect4cube import EMPTY
@@ -17,8 +18,9 @@ class Player:
 
 class BasePlayer(Player):
     """ Abstract player backed by a simple board """
-    def __init__(self):
+    def __init__(self, board_viewer=None):
         self.board = Board()
+        self.board_viewer = board_viewer
 
     def play(self, other_x, other_y) -> tuple:
         assert self.board.round < 5 * 5 * 5
@@ -28,14 +30,20 @@ class BasePlayer(Player):
         self.board.move(x, y)
         return x, y
 
+    def do_select(self, x, y):
+        if self.board_viewer is None:
+            return
+        self.board_viewer.player_selects(x, y)
+
     def do_play(self) -> tuple:
         raise NotImplementedError
 
 
 class RandomPlayer(BasePlayer):
-    def __init__(self, seed=None):
+    def __init__(self, seed=None, sleep_sec=0):
         super().__init__()
         self.rand = Random(seed)
+        self.sleep_sec = sleep_sec
 
     def do_play(self) -> tuple:
         while True:
@@ -43,6 +51,9 @@ class RandomPlayer(BasePlayer):
             x = self.rand.randint(0, 4)
             y = self.rand.randint(0, 4)
             if self.board.field(x, y, 4) == EMPTY:
+                sleep(self.sleep_sec/2)
+                self.do_select(x, y)
+                sleep(self.sleep_sec/2)
                 return x, y
 
 

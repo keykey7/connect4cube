@@ -1,6 +1,7 @@
 from vpython import sphere, vector, canvas, color
 
-from connect4cube.board import Board
+from connect4cube.game import Game
+from connect4cube.player import RandomPlayer
 from connect4cube.viewer_led import LedViewer
 
 
@@ -8,7 +9,7 @@ class VPythonViewer(LedViewer):
     """
     A Mockup class for local pingping LED debugging
     """
-    no_color = color.gray(0.5)
+    no_color = color.white * 0.25
 
     def __init__(self, board):
         super().__init__(board, pixel_count=0)
@@ -20,7 +21,7 @@ class VPythonViewer(LedViewer):
                     pxid = self.xyz2pxid(x, y, z)
                     led = sphere(canvas=c,
                                  pos=vector(x - 2, z - 2, y - 2),
-                                 radius=0.33,
+                                 radius=0.2,  # pingpong ball diameter is 40mm, distance between 'em 100mm
                                  color=self.no_color)
                     # noinspection PyTypeChecker
                     self.pixels[pxid] = led
@@ -30,21 +31,11 @@ class VPythonViewer(LedViewer):
 
     def set_color(self, x, y, z, r, g, b):
         pxid = self.xyz2pxid(x, y, z)
-        self.pixels[pxid].color = vector(r, g, b) / 2 + self.no_color
+        self.pixels[pxid].color = vector(r / 200.0, g / 200.0, b / 200.0) * 0.75 + self.no_color
 
     def show(self):
         pass
 
 
 if __name__ == "__main__":
-    testboard = Board()
-    testboard.move(1, 2)
-    testboard.move(1, 2)
-    testboard.move(1, 2)
-    testboard.move(1, 3)
-    testboard.move(3, 3)
-    testboard.move(3, 3)
-    testboard.move(1, 0)
-    testboard.move(0, 0)
-    testboard.move(1, 0)
-    VPythonViewer(testboard).draw()
+    Game(RandomPlayer(sleep_sec=1), RandomPlayer(sleep_sec=1), viewer=VPythonViewer).play()

@@ -5,17 +5,17 @@ class BoardViewer:
     def __init__(self, board):
         self.board = board
 
-    def draw(self):
+    def paint(self):
         pass
 
     def player_plays(self, x, y):
-        self.draw()
+        self.paint()
 
     def player_selects(self, x, y):
-        self.draw()
+        self.player_plays(x, y)
 
     def finish(self, winning_coords):
-        self.draw()
+        self.paint()
 
 
 class StdoutViewer(BoardViewer):
@@ -33,10 +33,7 @@ class StdoutViewer(BoardViewer):
         s = self.header.format(self.value2char.get(self.board.next_color), self.board.round)
         for x in range(5):
             for z in range(5):
-                if z == 0 and x == 0:
-                    s += "X "
-                else:
-                    s += "  "
+                s += "X " if z == 0 and x == 0 else "  "
                 for y in range(5):
                     v = self.board.field(x, y, z)
                     vs = self.value2char.get(v, "{}?".format(v))
@@ -47,7 +44,7 @@ class StdoutViewer(BoardViewer):
             s += "\n"
         return s
 
-    def draw(self):
+    def paint(self):
         print(self.draw_str())
 
     def player_plays(self, x, y):

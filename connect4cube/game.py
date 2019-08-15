@@ -18,7 +18,9 @@ class Game:
     def play(self) -> int:
         board = Board()
         viewer = self.viewer_factory(board)
-        viewer.draw()
+        for player in self.players:
+            player.board_viewer = viewer
+        viewer.paint()
         last_x = None
         last_y = None
         while board.round <= MAX_ROUND:
