@@ -1,4 +1,8 @@
+import logging
+
 from connect4cube import RED, BLUE, EMPTY
+
+LOG = logging.getLogger(__name__)
 
 
 class BoardViewer:
@@ -12,7 +16,7 @@ class BoardViewer:
         self.paint()
 
     def player_selects(self, x, y):
-        self.player_plays(x, y)
+        self.paint()
 
     def finish(self, winning_coords):
         self.paint()
@@ -30,6 +34,7 @@ class StdoutViewer(BoardViewer):
         return "[" + value[0] + "]"
 
     def draw_str(self, select_coords=None):
+        LOG.debug("stdoutboard select_coords={}".format(select_coords))
         s = self.header.format(self.value2char.get(self.board.next_color), self.board.round)
         for x in range(5):
             for z in range(5):
@@ -38,6 +43,7 @@ class StdoutViewer(BoardViewer):
                     v = self.board.field(x, y, z)
                     vs = self.value2char.get(v, "{}?".format(v))
                     if select_coords is not None and [x, y, z] in select_coords:
+                        LOG.debug("stdoutboard selected {},{},{}".format(x, y, z))
                         s = s[:-1]  # need the previous space
                         vs = self.select_value(vs)
                     s += vs
@@ -52,6 +58,14 @@ class StdoutViewer(BoardViewer):
         while z >= 0 and self.board.field(x, y, z) == EMPTY:
             z -= 1
         print(self.draw_str([[x, y, z]]))
+
+    def player_selects(self, x, y):
+        selected = []
+        z = 4
+        while z >= 0 and self.board.field(x, y, z) == EMPTY:
+            selected.append([x, y, z])
+            z -= 1
+        print(self.draw_str(selected))
 
     def finish(self, winning_coords):
         print(self.draw_str(winning_coords))

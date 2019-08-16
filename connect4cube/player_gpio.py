@@ -1,8 +1,11 @@
+import logging
 from time import sleep
 
 from Adafruit_GPIO import GPIO
 
 from connect4cube.player import BasePlayer
+
+LOG = logging.getLogger(__name__)
 
 
 class GpioPlayer(BasePlayer):
@@ -10,7 +13,8 @@ class GpioPlayer(BasePlayer):
     A binary-joystick controlled player using RasPi GPIOs
     https://pinout.xyz/
     """
-    def __init__(self, north=5, east=6, south=12, west=13, button1=16, board_viewer=None):
+
+    def __init__(self, north=5, east=6, south=12, west=13, button1=16):
         super().__init__()
         self.all_pins = [north, east, south, west, button1]
         self.clicked = False
@@ -30,6 +34,7 @@ class GpioPlayer(BasePlayer):
         :param pin: the GPIO pin nr
         :return: void
         """
+        LOG.debug("GPIO callback @PIN {}".format(pin))
         if self.clicked:
             return  # too late to the party
         action = self.all_pins.index(pin)
@@ -45,6 +50,7 @@ class GpioPlayer(BasePlayer):
         elif action == 4:
             self.clicked = True
         self.selected = (x, y)
+        LOG.debug("GPIO selected {},{}".format(x, y))
         self.do_select(x, y)
 
     def do_play(self) -> tuple:

@@ -12,6 +12,7 @@ vpython = "*"
 [packages]
 coloredlogs = "*"
 adafruit-ws2801 = "*"
+"rpi.gpio" = "*"
 
 [requires]
 python_version = "3.7"

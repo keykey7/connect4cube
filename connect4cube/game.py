@@ -1,9 +1,12 @@
+import logging
+
 from connect4cube import EMPTY
 from connect4cube.board import Board
 from connect4cube.player import Player, RandomPlayer, StdinPlayer
 from connect4cube.viewer import AnsiStdoutViewer
 
 MAX_ROUND = 5 * 5 * 5 - 1
+LOG = logging.getLogger(__name__)
 
 
 class RuleViolation(Exception):
@@ -19,7 +22,7 @@ class Game:
         board = Board()
         viewer = self.viewer_factory(board)
         for player in self.players:
-            player.board_viewer = viewer
+            player.attach_board_viewer(viewer)
         viewer.paint()
         last_x = None
         last_y = None
@@ -31,11 +34,14 @@ class Game:
             if board.field(x, y, 4) != EMPTY:
                 raise RuleViolation("already full at {},{}".format(x, y))
             is_winning = board.move(x, y)
+            LOG.debug("player {} plays to {},{}".format(current_color, x, y))
             viewer.player_plays(x, y)
             if is_winning:
+                LOG.debug("player {} wins!".format(current_color))
                 viewer.finish(board.winning_coords())
                 return current_color
             (last_x, last_y) = (x, y)
+        LOG.debug("game ended in a draw")
         viewer.finish([])
         return EMPTY
 

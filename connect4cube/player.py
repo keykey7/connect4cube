@@ -18,9 +18,12 @@ class Player:
 
 class BasePlayer(Player):
     """ Abstract player backed by a simple board """
-    def __init__(self, board_viewer=None):
+    def __init__(self):
         self.board = Board()
-        self.board_viewer = board_viewer
+        self.board_viewer = None
+
+    def attach_board_viewer(self, viewer):
+        self.board_viewer = viewer
 
     def play(self, other_x, other_y) -> tuple:
         assert self.board.round < 5 * 5 * 5
