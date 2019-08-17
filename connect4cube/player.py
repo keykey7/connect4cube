@@ -21,13 +21,11 @@ class BasePlayer(Player):
     def __init__(self):
         self.board = Board()
         self.board_viewer = None
-
-    def attach_board_viewer(self, viewer):
-        self.board_viewer = viewer
+        self.play_both_sides = False
 
     def play(self, other_x, other_y) -> tuple:
         assert self.board.round < 5 * 5 * 5
-        if other_x is not None:
+        if other_x is not None and not self.play_both_sides:
             self.board.move(other_x, other_y)
         (x, y) = self.do_play()
         self.board.move(x, y)

@@ -3,6 +3,7 @@ from time import sleep
 
 from gpiozero import Button
 
+from connect4cube import EMPTY
 from connect4cube.player import BasePlayer
 
 LOG = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ class GpioPlayer(BasePlayer):
         """
         super().__init__()
         pin2fn = {
-            north: self.north,
+            north: lambda: self.axis_pressed(1, 0),
             east: lambda: self.axis_pressed(0, 1),
             south: lambda: self.axis_pressed(-1, 0),
             west: lambda: self.axis_pressed(0, -1),
@@ -29,13 +30,11 @@ class GpioPlayer(BasePlayer):
         for pin, fn in pin2fn.items():
             button = Button(pin, hold_repeat=True, hold_time=2)
             button.when_pressed = fn
-            button.when_held = fn
+            if pin != button1:  # button press shouldn't be repeatable, for direction repeat is ok
+                button.when_held = fn
             self.buttons.append(button)
         self.clicked = False
         self.selected = (2, 2)
-
-    def north(self):
-        self.axis_pressed(1, 0)
 
     def axis_pressed(self, dx, dy):
         x, y = self.selected
@@ -53,10 +52,14 @@ class GpioPlayer(BasePlayer):
 
     def button_pressed(self):
         LOG.debug("GPIO button pressed")
+        if self.board.field(*self.selected, 4) != EMPTY:
+            LOG.debug("non playable location, ignoring")
+            return
         self.clicked = True
 
     def do_play(self) -> tuple:
         self.clicked = False
+        self.do_select(*self.selected)  # first show the last selected location
         while not self.clicked:
-            sleep(0.1)
+            sleep(0.1)  # TODO: preferably an interrupt instead of polling here
         return self.selected
