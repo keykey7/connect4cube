@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2332df60bcd616a41299ae0e1ccf80da464abef6d24be7c1b26b1f4a8affd95f"
+            "sha256": "611ac12be5a183e05ba906ff9d33747e2bd66b7d01164bcf8063bbb5f1e3a020"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,25 +16,30 @@
         ]
     },
     "default": {
-        "adafruit-gpio": {
+        "adafruit-blinka": {
             "hashes": [
-                "sha256:d6465b92c866c51ca8f3bc1e8f2ec36f5ccdb46d0fd54101c1109756d4a2dcd0"
+                "sha256:9ab868618fc8bcba779f1a29202c804b2a4b73e7b7babc906ab962bdefb95085"
             ],
-            "version": "==1.0.3"
+            "version": "==2.3.1"
+        },
+        "adafruit-circuitpython-neopixel": {
+            "hashes": [
+                "sha256:b280f3ef9ecf4f307cd7ebf1952ee802ee050faf96ff3c70d61e95ed609dc609"
+            ],
+            "index": "pypi",
+            "version": "==3.3.7"
+        },
+        "adafruit-platformdetect": {
+            "hashes": [
+                "sha256:11b0ae925ab430625c1e8abc5aabf850aa10bfff46f63cd580153e3f3b915cae"
+            ],
+            "version": "==1.3.2"
         },
         "adafruit-pureio": {
             "hashes": [
                 "sha256:e65cd929f1d8e109513ed1e457c2742bf4f15349c1a9b7f5b1e04191624d7488"
             ],
             "version": "==0.2.3"
-        },
-        "adafruit-ws2801": {
-            "hashes": [
-                "sha256:328e5ccf673665943498de735fb510c868b94f97a220d81f6eea7d11600fa333",
-                "sha256:50b1ab1b975ca9e9574e48c6f4c60c9979bd2ed6cd651f7866dc995b0da29f9c"
-            ],
-            "index": "pypi",
-            "version": "==1.0.1"
         },
         "coloredlogs": {
             "hashes": [
@@ -66,6 +71,16 @@
             ],
             "version": "==4.18"
         },
+        "rpi-ws281x": {
+            "hashes": [
+                "sha256:262ad65562333c20ccb1f10850f2413521dd300a2af16de32cbfa27b5b8353ac",
+                "sha256:bad191da9945d7ba9fe0f88ab70d04e6af1b554f520eaa50415f7bff1fa31150",
+                "sha256:d06cd31217dec40d715a3a07ccb2b4b0b0719527c5aa020cbdd77d0c0b31d113",
+                "sha256:dbbb04947b3166d96ba48a82702be9e9e762eb78922434e491d0de958f8fe8c7",
+                "sha256:eb2365f513b333fb1574131a1a719b66ffd252624c192ac0e954a5970cfea84f"
+            ],
+            "version": "==4.2.2"
+        },
         "rpi.gpio": {
             "hashes": [
                 "sha256:7424bc6c205466764f30f666c18187a0824077daf20b295c42f08aea2cb87d3f"
@@ -78,6 +93,14 @@
                 "sha256:4314e52f573d95233c907f307558893313a8a606e197e77bb711526b0e179e80"
             ],
             "version": "==3.4"
+        },
+        "sysv-ipc": {
+            "hashes": [
+                "sha256:b284e961274c67ed3debfdd8a43f197451c5f100955142bbed380258c6c73e06",
+                "sha256:b59fbd42c9de27b42fdda69c4aa7556312112dc6ac7246e44cd875cf049e4273",
+                "sha256:cd70548a92218ede2da499080b31e52f1d7cf60716c5cc7d468ec89e8b73c530"
+            ],
+            "version": "==1.0.0"
         }
     },
     "develop": {
