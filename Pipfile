@@ -11,7 +11,7 @@ vpython = "*"
 
 [packages]
 coloredlogs = "*"
-adafruit-ws2801 = "*"
+adafruit-circuitpython-neopixel = "*"
 "rpi.gpio" = "*"
 gpiozero = "*"
 

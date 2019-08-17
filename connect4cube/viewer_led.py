@@ -1,20 +1,19 @@
-import Adafruit_WS2801
+import board
+import neopixel
 
 from connect4cube import RED, BLUE, EMPTY
 from connect4cube.viewer import BoardViewer
 
 
 class LedViewer(BoardViewer):
-    def __init__(self, board, pixel_count=125, pixel_clock=18, pixel_dout=23):
+    def __init__(self, board, pixel_count=125, pixel_pin=board.D18):
         """
         :param board:
         :param pixel_count: amount of pixels
-        :param pixel_clock: The WS2801 library makes use of the BCM pin numbering scheme.
-            Specify a software SPI connection for Raspberry Pi
-        :param pixel_dout: see above
+        :param pixel_pin: The neopixel library makes use of the BCM pin numbering scheme.
         """
         super().__init__(board)
-        self.pixels = Adafruit_WS2801.WS2801Pixels(pixel_count, clk=pixel_clock, do=pixel_dout) if pixel_count > 0 \
+        self.pixels = neopixel.NeoPixel(pixel_pin, pixel_count, auto_write=False, pixel_order=neopixel.GRB) if pixel_count > 0 \
             else None
 
     def xyz2pxid(self, x, y, z) -> int:
@@ -22,8 +21,7 @@ class LedViewer(BoardViewer):
 
     def set_color(self, x, y, z, r, g, b):
         pxid = self.xyz2pxid(x, y, z)
-        color = Adafruit_WS2801.RGB_to_color(r, g, b)
-        self.pixels.set_pixel(pxid, color)
+        self.pixels[pxid] = (r, g, b)
 
     def show(self):
         self.pixels.show()
