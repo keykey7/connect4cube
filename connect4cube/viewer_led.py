@@ -13,8 +13,8 @@ class LedViewer(BoardViewer):
         :param pixel_pin: The neopixel library makes use of the BCM pin numbering scheme.
         """
         super().__init__(board)
-        self.pixels = neopixel.NeoPixel(pixel_pin, pixel_count, auto_write=False, pixel_order=neopixel.GRB) if pixel_count > 0 \
-            else None
+        self.pixels = neopixel.NeoPixel(pixel_pin, pixel_count, auto_write=False, pixel_order=neopixel.GRB) \
+            if pixel_count > 0 else None
 
     def xyz2pxid(self, x, y, z) -> int:
         raise NotImplementedError("actual mapping to be implemented")
