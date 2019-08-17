@@ -11,7 +11,7 @@ logger.debug("sys.path=" + ":".join(sys.path))
 
 def is_a_raspberry():
     try:
-        import RPi.GPIO
+        import RPi.GPIO  # noqa: F401
         return True
     except (ImportError, RuntimeError):
         return False
@@ -19,13 +19,11 @@ def is_a_raspberry():
 
 def main():
     if is_a_raspberry():
-        player1 = GpioPlayer()
-        player1.play_both_sides = True
-        player2 = player1
+        player = GpioPlayer()
+        # TODO: Game(player, player, viewer=LedViewer)
+        Game(player, player).play()
     else:
-        player1 = RandomPlayer()
-        player2 = StdinPlayer()
-    Game(player1, player2).play()
+        Game(RandomPlayer(), StdinPlayer()).play()
 
 
 if __name__ == "__main__":
