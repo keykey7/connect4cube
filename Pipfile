@@ -13,6 +13,7 @@ vpython = "*"
 coloredlogs = "*"
 adafruit-ws2801 = "*"
 "rpi.gpio" = "*"
+gpiozero = "*"
 
 [requires]
 python_version = "3.7"

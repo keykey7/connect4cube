@@ -2,7 +2,7 @@ import logging
 import sys
 
 from connect4cube.game import Game
-from connect4cube.player import StdinPlayer, RandomPlayer
+from connect4cube.player import RandomPlayer
 from connect4cube.player_gpio import GpioPlayer
 
 logger = logging.getLogger(__name__)
