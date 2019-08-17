@@ -20,9 +20,9 @@ class GpioPlayer(BasePlayer):
         """
         super().__init__()
         pin2fn = {
-            north: lambda: self.axis_pressed(1, 0),
+            north: lambda: self.axis_pressed(-1, 0),
             east: lambda: self.axis_pressed(0, 1),
-            south: lambda: self.axis_pressed(-1, 0),
+            south: lambda: self.axis_pressed(1, 0),
             west: lambda: self.axis_pressed(0, -1),
             button1: self.button_pressed
         }
