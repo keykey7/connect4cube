@@ -1,19 +1,19 @@
-import board
-import neopixel
+from adafruit_blinka.board.raspi_40pin import D18
+from neopixel import NeoPixel, GRB
 
 from connect4cube import RED, BLUE, EMPTY
 from connect4cube.viewer import BoardViewer
 
 
 class LedViewer(BoardViewer):
-    def __init__(self, board, pixel_count=125, pixel_pin=board.D18):
+    def __init__(self, board, pixel_count=125, pixel_pin=D18):
         """
         :param board:
         :param pixel_count: amount of pixels
         :param pixel_pin: The neopixel library makes use of the BCM pin numbering scheme.
         """
         super().__init__(board)
-        self.pixels = neopixel.NeoPixel(pixel_pin, pixel_count, auto_write=False, pixel_order=neopixel.GRB) \
+        self.pixels = NeoPixel(pixel_pin, pixel_count, auto_write=False, pixel_order=GRB) \
             if pixel_count > 0 else None
 
     def xyz2pxid(self, x, y, z) -> int:

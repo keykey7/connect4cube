@@ -1,6 +1,6 @@
 # Raspberry PI Quirks
 
-## Headless Setup
+### Headless Setup
 Flash a Raspian on an SDCard, then mount it and
 ```bash
 # enable SSH (pi:raspberry)
@@ -21,6 +21,20 @@ EOT
 
 sudo umount /run/media/$USER/boot
 ```
+
+### PI Bootstrapping
 * Direct LAN connection with static IP in same network, then `ssh-copy-id pi@10.0.0.23`.   
-* `sudo raspi-config`, change password, change hostname, setup WiFi
+* `sudo raspi-config`:   
+  1 - change password   
+  2 - N1, N2 - change hostname, setup WiFi   
+  5 - P4, P5 - enable SPI, enable I2C   
 * `sudo apt install unattended-upgrades sshfs python3-pip`
+* `sudo reboot`
+
+### connect4cube installation
+I2C access requires [root permissions](https://raspberrypi.stackexchange.com/questions/51375/) (sic).
+```bash
+sudo pip3 install pipenv
+sudo pipenv install
+sudo pipenv shell
+```

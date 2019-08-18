@@ -5,7 +5,7 @@
 
 A 3D connect four game ("4 gewinnt").
 
-### Getting Started
+### Development Environment
 * `python3.7`
 * `pipenv` as package manager (`pip install --user pipenv`)
 * PyCharm: [Configure pipenv](https://www.jetbrains.com/help/pycharm/pipenv.html) 
@@ -16,9 +16,12 @@ A 3D connect four game ("4 gewinnt").
     python3 -m connect4cube
     ```
 
+For an opinionated Raspberry PI setup see [RASPI.md](RASPI.md).
+
 ### Testing
 ```bash
 pytest
+flake8
 ```
 Running the VPython 3D mockup:
 ```bash
