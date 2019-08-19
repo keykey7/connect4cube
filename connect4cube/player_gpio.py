@@ -63,7 +63,8 @@ class GpioPlayer(BasePlayer):
 
     def do_play(self) -> tuple:
         self.clicked = False
-        self.do_select(*self.selected)  # first show the last selected location
+        with self.lock:
+            self.do_select(*self.selected)  # first show the last selected location
         while not self.clicked:
             sleep(0.1)  # TODO: preferably an interrupt instead of polling here
         return self.selected
