@@ -15,7 +15,7 @@ class VPythonCube():
                 for z in range(5):
                     pxid = self.xyz2pxid(x, y, z)
                     led = sphere(canvas=c,
-                                 pos=vector(x - 2, z - 2, y - 2),
+                                 pos=vector(y - 2, z - 2, x - 2),
                                  radius=0.2,  # pingpong ball diameter is 40mm, distance between 'em 100mm
                                  color=self.no_color)
                     # noinspection PyTypeChecker
