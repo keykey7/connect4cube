@@ -25,5 +25,5 @@ flake8
 ```
 Running the VPython 3D mockup:
 ```bash
-PYTHONPATH=$(pwd) python tests/viewer_vpython.py
+PYTHONPATH=$(pwd) python3 -m connect4cube --vpython
 ```
