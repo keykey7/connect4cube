@@ -6,7 +6,6 @@ from connect4cube.viewer_led import LedViewer
 from connect4cube.util import is_a_raspberry
 
 
-
 logger = logging.getLogger(__name__)
 logger.debug("sys.path=" + ":".join(sys.path))
 
