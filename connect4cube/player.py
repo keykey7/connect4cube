@@ -74,4 +74,5 @@ class StdinPlayer(BasePlayer):
             if self.board.field(x, y, 4) != EMPTY:
                 sys.stderr.write("invalid move, column is already full, retry\n")
                 continue
+            self.do_select(x, y)
             return x, y
