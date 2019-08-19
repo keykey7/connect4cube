@@ -1,5 +1,6 @@
 import logging
 from time import sleep
+from threading import Lock
 
 from gpiozero import Button
 
@@ -35,27 +36,30 @@ class GpioPlayer(BasePlayer):
             self.buttons.append(button)
         self.clicked = False
         self.selected = (2, 2)
+        self.lock = Lock()
 
     def axis_pressed(self, dx, dy):
-        x, y = self.selected
-        x += dx
-        y += dy
-        if not (0 <= x < 5 and 0 <= y < 5):
-            LOG.debug("out of bounds: ignoring {},{}".format(x, y))
-            return
-        if self.clicked:
-            LOG.debug("too late: ignoring {},{}".format(x, y))
-            return
-        self.selected = (x, y)
-        LOG.debug("GPIO selected {},{}".format(x, y))
-        self.do_select(x, y)
+        with self.lock:
+            x, y = self.selected
+            x += dx
+            y += dy
+            if not (0 <= x < 5 and 0 <= y < 5):
+                LOG.debug("out of bounds: ignoring {},{}".format(x, y))
+                return
+            if self.clicked:
+                LOG.debug("too late: ignoring {},{}".format(x, y))
+                return
+            self.selected = (x, y)
+            LOG.debug("GPIO selected {},{}".format(x, y))
+            self.do_select(x, y)
 
     def button_pressed(self):
-        LOG.debug("GPIO button pressed")
-        if self.board.field(*self.selected, 4) != EMPTY:
-            LOG.debug("non playable location, ignoring")
-            return
-        self.clicked = True
+        with self.lock:
+            LOG.debug("GPIO button pressed")
+            if self.board.field(*self.selected, 4) != EMPTY:
+                LOG.debug("non playable location, ignoring")
+                return
+            self.clicked = True
 
     def do_play(self) -> tuple:
         self.clicked = False
