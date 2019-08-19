@@ -59,20 +59,44 @@ class RandomPlayer(BasePlayer):
 
 
 class StdinPlayer(BasePlayer):
+    def __init__(self):
+        super().__init__()
+        self.selected = (2, 2)
+
     def do_play(self) -> tuple:
-        switcher = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, '0': 0, '1': 1, '2': 2, '3': 3, '4': 4}
+        switcher_2digit = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, '0': 0, '1': 1, '2': 2, '3': 3, '4': 4}
+        switcher_1digit = {'d': (0, 0), 'j': (1, 0), 'k': (-1, 0), 'h': (0, -1), 'l': (0, 1)}
+        self.do_select(*self.selected)
         while True:
             s = input("move> ").lower()
-            if len(s) != 2:
-                sys.stderr.write("expected 2 digits, like 'A0', retry\n")
+            if len(s) == 1:
+                diff = switcher_1digit.get(s[0], (-1, -1))
+                if diff == (-1, -1):
+                    sys.stderr.write("invalid digit, 'j'=x+1, 'k'=x-1, 'h'=y-1, 'l'=y+1, 'd'=drop, retry\n")
+                    continue
+                x = self.selected[0] + diff[0]
+                y = self.selected[1] + diff[1]
+                if x < 0 or y < 0 or x > 4 or y > 4:
+                    continue
+                self.selected = (x, y)
+                self.do_select(*self.selected)
+                # (0, 0) is used to drop
+                if diff != (0, 0):
+                    continue
+            elif len(s) == 2:
+                x = switcher_2digit.get(s[0], -1)
+                y = switcher_2digit.get(s[1], -1)
+                if x < 0 or y < 0:
+                    sys.stderr.write("invalid digit, try something like 'A0', retry\n")
+                    continue
+                self.selected = (x, y)
+            else:
+                sys.stderr.write("expected one of the following:\n")
+                sys.stderr.write("  1 digit, 'j'=x+1, 'k'=x-1, 'h'=y-1, 'l'=y+1, 'd'=drop, retry\n")
+                sys.stderr.write("  2 digits, like 'A0', retry\n")
                 continue
-            x = switcher.get(s[0], -1)
-            y = switcher.get(s[1], -1)
-            if x < 0 or y < 0:
-                sys.stderr.write("invalid digit, try something like 'A0', retry\n")
-                continue
-            if self.board.field(x, y, 4) != EMPTY:
+            if self.board.field(*self.selected, 4) != EMPTY:
                 sys.stderr.write("invalid move, column is already full, retry\n")
                 continue
-            self.do_select(x, y)
+            self.do_select(*self.selected)
             return x, y
