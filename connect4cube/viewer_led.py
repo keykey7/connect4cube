@@ -1,5 +1,6 @@
 from adafruit_blinka.board.raspi_40pin import D18
 from neopixel import NeoPixel, GRB
+from time import sleep
 
 from connect4cube import RED, BLUE, EMPTY
 from connect4cube.viewer import BoardViewer
@@ -57,8 +58,6 @@ class LedViewer(BoardViewer):
         self.show()
 
     def player_plays(self, x, y):
-        # TODO: obviously we want an animation here :)
-        self.set_board_colors()
         z = 4
         while z >= 0 and self.board.field(x, y, z) == EMPTY:
             z -= 1
@@ -69,8 +68,16 @@ class LedViewer(BoardViewer):
             color = (0, 0, 255)
         else:
             raise AssertionError()
-        self.set_color(x, y, z, *color)
+        z = 4
+        while self.board.field(x, y, z) != value:
+            self.set_color(x, y, z, *color)
+            self.show()
+            self.set_color(x, y, z, 0, 0, 0)
+            sleep(0.1)
+            z -= 1
+        self.set_board_colors()
         self.show()
+        sleep(0.2)
 
     def player_selects(self, x, y):
         self.set_board_colors()
@@ -92,9 +99,9 @@ class LedViewer(BoardViewer):
                 for z in range(5):
                     value = self.board.field(x, y, z)
                     if value == RED:
-                        color = (150, 0, 0)
+                        color = (255, 0, 0)
                     elif value == BLUE:
-                        color = (0, 0, 150)
+                        color = (0, 0, 255)
                     else:
                         color = (0, 0, 0)
                     self.set_color(x, y, z, *color)
