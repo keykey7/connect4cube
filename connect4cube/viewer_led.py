@@ -1,5 +1,6 @@
 from adafruit_blinka.board.raspi_40pin import D18
 from neopixel import NeoPixel, GRB
+from threading import Thread, Event, current_thread
 from time import sleep
 
 from connect4cube import RED, BLUE, EMPTY
@@ -16,6 +17,7 @@ class LedViewer(BoardViewer):
         super().__init__(board)
         self.pixels = NeoPixel(pixel_pin, pixel_count, auto_write=False, pixel_order=GRB) \
             if pixel_count > 0 else None
+        self.select_animation_thread = None
 
     def xyz2pxid(self, x, y, z) -> int:
         transform = {
@@ -58,6 +60,9 @@ class LedViewer(BoardViewer):
         self.show()
 
     def player_plays(self, x, y):
+        if self.select_animation_thread is not None:
+            self.select_animation_thread.stop()
+            self.select_animation_thread.join()
         z = 4
         while z >= 0 and self.board.field(x, y, z) == EMPTY:
             z -= 1
@@ -80,6 +85,9 @@ class LedViewer(BoardViewer):
         sleep(0.2)
 
     def player_selects(self, x, y):
+        if self.select_animation_thread is not None:
+            self.select_animation_thread.stop()
+            self.select_animation_thread.join()
         self.set_board_colors()
         if self.board.field(x, y, 4) != EMPTY:
             # unplayable
@@ -92,6 +100,9 @@ class LedViewer(BoardViewer):
             z += 1
             self.set_color(x, y, z, 0, 255, 0)
         self.show()
+        self.select_animation_thread = StoppableThread(target=self.select_animation, args=(x, y))
+        self.select_animation_thread.daemon = True
+        self.select_animation_thread.start()
 
     def finish(self, winning_coords):
         self.set_board_colors()
@@ -116,3 +127,44 @@ class LedViewer(BoardViewer):
                     else:
                         color = (0, 0, 0)
                     self.set_color(x, y, z, *color)
+
+    def select_animation(self, x, y):
+        on = True
+        delay = 0
+        while not current_thread().stopped():
+            if delay < 5:
+                delay += 1
+            else:
+                delay = 0
+                if on:
+                    if self.board.next_color == RED:
+                        color = (255, 0, 0)
+                    elif self.board.next_color == BLUE:
+                        color = (0, 0, 255)
+                    else:
+                        raise AssertionError()
+                else:
+                    if self.board.field(x, y, 4) == EMPTY:
+                        color = (0, 255, 0)
+                    else:
+                        color = (100, 0, 100)
+                self.set_color(x, y, 4, *color)
+                self.show()
+                on = not on
+            # use a smallish delay to make Thread.join() more responsive
+            sleep(0.1)
+
+
+class StoppableThread(Thread):
+    """
+    A normal thread with a stop event.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.stop_event = Event()
+
+    def stop(self):
+        self.stop_event.set()
+
+    def stopped(self):
+        return self.stop_event.is_set()
