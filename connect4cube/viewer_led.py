@@ -93,6 +93,17 @@ class LedViewer(BoardViewer):
             self.set_color(x, y, z, 0, 255, 0)
         self.show()
 
+    def finish(self, winning_coords):
+        self.set_board_colors()
+        for i in range(5):
+            for c in winning_coords:
+                self.set_color(*c, 0, 0, 0)
+            self.show()
+            sleep(0.2)
+            self.set_board_colors()
+            self.show()
+            sleep(0.2)
+
     def set_board_colors(self):
         for x in range(5):
             for y in range(5):
