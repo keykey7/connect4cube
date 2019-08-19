@@ -2,7 +2,10 @@ import logging
 import sys
 
 from connect4cube.game import Game
-from connect4cube.player import RandomPlayer, StdinPlayer
+
+
+logger = logging.getLogger(__name__)
+logger.debug("sys.path=" + ":".join(sys.path))
 
 is_a_raspberry = False
 try:
@@ -14,19 +17,12 @@ except (ImportError, RuntimeError):
 if is_a_raspberry:
     from connect4cube.player_gpio import GpioPlayer
     from connect4cube.viewer_led import LedViewer
-
-logger = logging.getLogger(__name__)
-logger.debug("sys.path=" + ":".join(sys.path))
-
-
-def main():
-    if is_a_raspberry:
-        player = GpioPlayer()
-        player.play_both_sides = True
-        Game(player, player, viewer=LedViewer).play()
-    else:
-        Game(RandomPlayer(), StdinPlayer()).play()
-
+    player = GpioPlayer()
+    player.play_both_sides = True
+    Game(player, player, viewer=LedViewer).play()
+else:
+    from connect4cube.player import RandomPlayer, StdinPlayer
+    Game(RandomPlayer(), StdinPlayer()).play()
 
 if __name__ == "__main__":
-    main()
+    pass  # only here for the play button

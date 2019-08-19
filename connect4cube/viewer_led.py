@@ -1,5 +1,3 @@
-from adafruit_blinka.board.raspi_40pin import D18
-from neopixel import NeoPixel, GRB
 from threading import Thread, Event, current_thread
 from time import sleep
 
@@ -8,16 +6,15 @@ from connect4cube.viewer import BoardViewer
 
 
 class LedViewer(BoardViewer):
-    def __init__(self, board, pixel_count=125, pixel_pin=D18):
-        """
-        :param board:
-        :param pixel_count: amount of pixels
-        :param pixel_pin: The neopixel library makes use of the BCM pin numbering scheme.
-        """
+    def __init__(self, board):
         super().__init__(board)
-        self.pixels = NeoPixel(pixel_pin, pixel_count, auto_write=False, pixel_order=GRB) \
-            if pixel_count > 0 else None
+        self.pixels = self.new_pixels()
         self.select_animation_thread = None
+
+    def new_pixels(self):
+        from adafruit_blinka.board.raspi_40pin import D18
+        from neopixel import NeoPixel, GRB
+        return NeoPixel(D18, 125, auto_write=False, pixel_order=GRB)
 
     def xyz2pxid(self, x, y, z) -> int:
         transform = {
@@ -106,7 +103,7 @@ class LedViewer(BoardViewer):
 
     def finish(self, winning_coords):
         self.set_board_colors()
-        for i in range(5):
+        for _ in range(5):
             for c in winning_coords:
                 self.set_color(*c, 0, 0, 0)
             self.show()

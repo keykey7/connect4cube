@@ -11,10 +11,9 @@ class VPythonViewer(LedViewer):
     """
     no_color = color.white * 0.25
 
-    def __init__(self, board):
-        super().__init__(board, pixel_count=0)
+    def new_pixels(self):
         c = canvas()
-        self.pixels = [None] * 125
+        px = [None] * 125
         for x in range(5):
             for y in range(5):
                 for z in range(5):
@@ -24,7 +23,8 @@ class VPythonViewer(LedViewer):
                                  radius=0.2,  # pingpong ball diameter is 40mm, distance between 'em 100mm
                                  color=self.no_color)
                     # noinspection PyTypeChecker
-                    self.pixels[pxid] = led
+                    px[pxid] = led
+        return px
 
     def xyz2pxid(self, x, y, z) -> int:
         return x + y * 5 + z * 25
