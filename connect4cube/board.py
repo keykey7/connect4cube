@@ -3,8 +3,10 @@ from itertools import product
 
 from connect4cube import RED, BLUE, EMPTY
 
-POS_DIRECTIONS = list(product([0, 1], repeat=3))
-POS_DIRECTIONS.pop(0)  # (0,0,0) isn't a valid move direction
+POS_DIRECTIONS = list(product([-1, 0, 1], repeat=3))
+# throw away have of the list since the reverse directions are also checked.
+# additionally throw away (0,0,0) since it is not a valid move direction.
+POS_DIRECTIONS = POS_DIRECTIONS[len(POS_DIRECTIONS) // 2 + 1:]
 
 
 class Board:
@@ -49,7 +51,7 @@ class Board:
             counter = 0
             for counter in range(3):
                 (x, y, z) = (x + d[0], y + d[1], z + d[2])
-                if x >= 5 or y >= 5 or z >= 5:
+                if 0 > x or 0 > y or 0 > z or x >= 5 or y >= 5 or z >= 5:
                     break  # out of bounds
                 if color != self.cube[x][y][z]:
                     break  # another color
@@ -58,7 +60,7 @@ class Board:
             (x, y, z) = (x0, y0, z0)
             for counter in range(counter, 3):
                 (x, y, z) = (x - d[0], y - d[1], z - d[2])
-                if 0 > x or 0 > y or 0 > z:
+                if 0 > x or 0 > y or 0 > z or x >= 5 or y >= 5 or z >= 5:
                     break
                 if color != self.cube[x][y][z]:
                     break

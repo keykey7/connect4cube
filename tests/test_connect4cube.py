@@ -17,7 +17,7 @@ def test_alternating_players():
     assert board.round == 2
 
 
-def test_win_backward():
+def test_win_backward1():
     board = Board()
     for i in range(3):
         assert not board.move(i, 0)
@@ -25,12 +25,28 @@ def test_win_backward():
     assert board.move(3, 0)
 
 
-def test_win_forward():
+def test_win_backward2():
+    board = Board()
+    for i in range(3):
+        assert not board.move(i, 3-i)
+        assert not board.move(i, 3-i)
+    assert board.move(3, 0)
+
+
+def test_win_forward1():
     board = Board()
     for i in range(3, 0, -1):
         assert not board.move(i, 0)
         assert not board.move(i, 0)
     assert board.move(0, 0)
+
+
+def test_win_forward2():
+    board = Board()
+    for i in range(3, 0, -1):
+        assert not board.move(i, 3-i)
+        assert not board.move(i, 3-i)
+    assert board.move(0, 3)
 
 
 def test_random_game():
