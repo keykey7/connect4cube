@@ -2,23 +2,15 @@ from threading import Thread, Event, current_thread
 from time import sleep
 
 from connect4cube import RED, BLUE, EMPTY
-from connect4cube.util import is_a_raspberry
+from connect4cube.cube import Cube
 from connect4cube.viewer import BoardViewer
-
-if is_a_raspberry():
-    from connect4cube.cube_led import LedCube
-else:
-    from connect4cube.cube_vpython import VPythonCube
 
 
 class LedViewer(BoardViewer):
     def __init__(self, board):
         super().__init__(board)
         self.select_animation_thread = None
-        if is_a_raspberry():
-            self.cube = LedCube()
-        else:
-            self.cube = VPythonCube()
+        self.cube = Cube()
 
     def paint(self):
         self.set_board_colors()
