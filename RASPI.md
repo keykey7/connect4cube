@@ -32,9 +32,22 @@ sudo umount /run/media/$USER/boot
 * `sudo reboot`
 
 ### connect4cube installation
-I2C access requires [root permissions](https://raspberrypi.stackexchange.com/questions/51375/) (sic).
+PWM access requires [root permissions](https://github.com/jgarff/rpi_ws281x/issues/326).
 ```bash
 sudo pip3 install pipenv
 sudo pipenv install
 sudo pipenv shell
+```
+
+### start connect4cube on start
+Use a systemd unit file to automatically start connect4cube and keep restarting it once it stops.
+The connect4cube project has to be located in the pi home directory: /home/pi/connect4cube
+```bash
+cd
+git clone https://github.com/keykey7/connect4cube.git
+sudo cp connect4cube.service /lib/systemd/system/
+sudo chmod 644 /lib/systemd/system/connect4cube.service
+sudo systemctl daemon-reload
+sudo systemctl enable connect4cube.service
+sudo systemctl start connect4cube.service
 ```
