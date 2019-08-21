@@ -15,13 +15,15 @@ if not is_a_raspberry():
     Device.pin_factory = MockFactory()
 
 # must come AFTER mocking gpio pins
-# noqa: E402
-from connect4cube.player_gpio import GpioPlayer
-viewer = LedViewer()
-player1 = GpioPlayer(viewer)
-player1.play_both_sides = True
-player2 = player1
-Game(player1, player2, viewer).play()
+from connect4cube.player_gpio import GpioPlayer  # noqa: E402
+
+while True:
+    viewer = LedViewer()
+    player1 = GpioPlayer(viewer)
+    player1.play_both_sides = True
+    player2 = player1
+    Game(player1, player2, viewer).play()
+    player1.close()
 
 if __name__ == "__main__":
     pass  # only here for the play button

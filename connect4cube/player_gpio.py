@@ -68,3 +68,8 @@ class GpioPlayer(BasePlayer):
         while not self.clicked:
             sleep(0.1)  # TODO: preferably an interrupt instead of polling here
         return self.selected
+
+    def close(self):
+        # close any GPIO ports or creating a new player instance will fail until the garbage collector runs
+        for button in self.buttons:
+            button.close()
