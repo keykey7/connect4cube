@@ -1,4 +1,11 @@
+import logging
+from time import sleep
+
+from gpiozero import Device
 from vpython import sphere, vector, canvas, color
+
+
+LOG = logging.getLogger(__name__)
 
 
 class VPythonCube:
@@ -20,6 +27,7 @@ class VPythonCube:
                                  color=self.no_color)
                     # noinspection PyTypeChecker
                     self.pixels[pxid] = led
+        self.canvas.bind("keydown", handle_mock_gpio)  # handle keypresses
 
     def xyz2pxid(self, x, y, z) -> int:
         return x + y * 5 + z * 25
@@ -30,3 +38,20 @@ class VPythonCube:
 
     def show(self):
         pass
+
+
+def handle_mock_gpio(event):
+    LOG.debug("keydown {}".format(event.key))
+    pin = {
+        "up": 19,
+        "down": 26,
+        "left": 6,
+        "right": 13,
+        " ": 12,
+        "\n": 12
+    }.get(event.key, 0)
+    if pin != 0:
+        pin_dev = Device.pin_factory.pin(pin)
+        pin_dev.drive_low()
+        sleep(0.1)
+        pin_dev.drive_high()
