@@ -21,7 +21,6 @@ class Board:
     def __str__(self):
         from connect4cube.viewer import StdoutViewer  # otherwise circular deps
         viewer = StdoutViewer()
-        viewer.initialize(self)
         return viewer.draw_str()
 
     def move(self, x, y) -> bool:
