@@ -12,11 +12,8 @@ class LedViewer(BoardViewer):
         self.select_animation_thread = None
         self.cube = Cube()
 
-    def paint(self):
-        self.set_board_colors()
-        self.cube.show()
-
     def player_plays(self, x, y):
+        super().player_plays(x, y)
         if self.select_animation_thread is not None:
             self.select_animation_thread.stop()
             self.select_animation_thread.join()

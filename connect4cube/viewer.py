@@ -1,28 +1,23 @@
 import logging
 
 from connect4cube import RED, BLUE, EMPTY
+from connect4cube.board import Board
 
 LOG = logging.getLogger(__name__)
 
 
 class BoardViewer:
     def __init__(self):
-        self.board = None
-
-    def initialize(self, board):
-        self.board = board
-
-    def paint(self):
-        assert self.board is not None
+        self.board = Board()
 
     def player_plays(self, x, y):
-        self.paint()
+        self.board.move(x, y)
 
     def player_selects(self, x, y):
-        self.paint()
+        pass
 
     def finish(self, winning_coords):
-        self.paint()
+        pass
 
 
 class StdoutViewer(BoardViewer):
@@ -54,10 +49,8 @@ class StdoutViewer(BoardViewer):
             s += "\n"
         return s
 
-    def paint(self):
-        print(self.draw_str())
-
     def player_plays(self, x, y):
+        super().player_plays(x, y)
         z = 4
         while z >= 0 and self.board.field(x, y, z) == EMPTY:
             z -= 1

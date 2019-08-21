@@ -20,8 +20,6 @@ class Game:
 
     def play(self) -> int:
         board = Board()
-        self.viewer.initialize(board)
-        self.viewer.paint()
         last_x = None
         last_y = None
         while board.round <= MAX_ROUND:
