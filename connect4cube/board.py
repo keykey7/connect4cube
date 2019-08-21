@@ -13,14 +13,16 @@ class Board:
     LOG = logging.getLogger(__name__)
 
     def __init__(self):
-        self.cube = [[[EMPTY for z in range(5)] for y in range(5)] for x in range(5)]
+        self.cube = [[[EMPTY for _ in range(5)] for _ in range(5)] for _ in range(5)]
         self.next_color = RED
         self.round = 0
         self.winning_move = None
 
     def __str__(self):
         from connect4cube.viewer import StdoutViewer  # otherwise circular deps
-        return StdoutViewer(self).draw_str()
+        viewer = StdoutViewer()
+        viewer.initialize(self)
+        return viewer.draw_str()
 
     def move(self, x, y) -> bool:
         assert self.winning_move is None

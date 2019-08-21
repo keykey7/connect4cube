@@ -2,6 +2,9 @@ from connect4cube import RED, BLUE, EMPTY
 from connect4cube.board import Board
 from connect4cube.game import Game
 from connect4cube.player import RandomPlayer
+from connect4cube.viewer import StdoutViewer
+
+STDOUT = StdoutViewer()
 
 
 def test_alternating_players():
@@ -50,9 +53,9 @@ def test_win_forward2():
 
 
 def test_random_game():
-    game = Game(RandomPlayer(0), RandomPlayer(1))
+    game = Game(RandomPlayer(STDOUT, 0), RandomPlayer(STDOUT, 1), STDOUT)
     assert game.play() == BLUE
-    game = Game(RandomPlayer(0), RandomPlayer(4))
+    game = Game(RandomPlayer(STDOUT, 0), RandomPlayer(STDOUT, 4), STDOUT)
     assert game.play() == RED
 
 

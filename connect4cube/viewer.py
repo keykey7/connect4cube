@@ -6,11 +6,14 @@ LOG = logging.getLogger(__name__)
 
 
 class BoardViewer:
-    def __init__(self, board):
+    def __init__(self):
+        self.board = None
+
+    def initialize(self, board):
         self.board = board
 
     def paint(self):
-        pass
+        assert self.board is not None
 
     def player_plays(self, x, y):
         self.paint()
@@ -35,6 +38,7 @@ class StdoutViewer(BoardViewer):
 
     def draw_str(self, select_coords=None):
         LOG.debug("stdoutboard select_coords={}".format(select_coords))
+        assert self.board is not None, "board not initialized in viewer"
         s = self.header.format(self.value2char.get(self.board.next_color), self.board.round)
         for x in range(5):
             for z in range(5):

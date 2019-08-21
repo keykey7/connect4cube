@@ -7,8 +7,8 @@ from connect4cube.viewer import BoardViewer
 
 
 class LedViewer(BoardViewer):
-    def __init__(self, board):
-        super().__init__(board)
+    def __init__(self):
+        super().__init__()
         self.select_animation_thread = None
         self.cube = Cube()
 

@@ -2,8 +2,8 @@ import logging
 
 from connect4cube import EMPTY
 from connect4cube.board import Board
-from connect4cube.player import Player, RandomPlayer, StdinPlayer, BasePlayer
-from connect4cube.viewer import AnsiStdoutViewer
+from connect4cube.player import Player
+from connect4cube.viewer import BoardViewer
 
 MAX_ROUND = 5 * 5 * 5 - 1
 LOG = logging.getLogger(__name__)
@@ -14,17 +14,14 @@ class RuleViolation(Exception):
 
 
 class Game:
-    def __init__(self, player_red: Player, player_blue: Player, viewer=AnsiStdoutViewer):
+    def __init__(self, player_red: Player, player_blue: Player, viewer: BoardViewer):
         self.players = [player_red, player_blue]
-        self.viewer_factory = viewer
+        self.viewer = viewer
 
     def play(self) -> int:
         board = Board()
-        viewer = self.viewer_factory(board)
-        for player in self.players:
-            if isinstance(player, BasePlayer):
-                player.board_viewer = viewer
-        viewer.paint()
+        self.viewer.initialize(board)
+        self.viewer.paint()
         last_x = None
         last_y = None
         while board.round <= MAX_ROUND:
@@ -36,16 +33,12 @@ class Game:
                 raise RuleViolation("already full at {},{}".format(x, y))
             is_winning = board.move(x, y)
             LOG.debug("player {} plays to {},{}".format(current_color, x, y))
-            viewer.player_plays(x, y)
+            self.viewer.player_plays(x, y)
             if is_winning:
                 LOG.debug("player {} wins!".format(current_color))
-                viewer.finish(board.winning_coords())
+                self.viewer.finish(board.winning_coords())
                 return current_color
             (last_x, last_y) = (x, y)
         LOG.debug("game ended in a draw")
-        viewer.finish([])
+        self.viewer.finish([])
         return EMPTY
-
-
-if __name__ == "__main__":
-    Game(RandomPlayer(), StdinPlayer()).play()

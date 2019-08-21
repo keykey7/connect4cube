@@ -15,11 +15,11 @@ class GpioPlayer(BasePlayer):
     A binary-joystick controlled player using RasPi GPIOs
     https://gpiozero.readthedocs.io/en/stable/
     """
-    def __init__(self, north=19, east=13, south=26, west=6, button1=12):
+    def __init__(self, viewer, north=19, east=13, south=26, west=6, button1=12):
         """
         all pin numbers in BMC, see https://pinout.xyz/
         """
-        super().__init__()
+        super().__init__(viewer)
         pin2fn = {
             north: lambda: self.axis_pressed(-1, 0),
             east: lambda: self.axis_pressed(0, 1),

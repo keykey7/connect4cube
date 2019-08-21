@@ -6,9 +6,9 @@ else:
     from connect4cube.cube_vpython import VPythonCube
 
 
-class Cube():
+class Cube:
     """
-    Singleton class of an LED cube. Depending on the target the real LED cube or a vpython mochup is used.
+    Singleton class of an LED cube. Depending on the target the real LED cube or a vpython mockup is used.
     """
     instance = None
 

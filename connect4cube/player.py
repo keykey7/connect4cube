@@ -18,9 +18,9 @@ class Player:
 
 class BasePlayer(Player):
     """ Abstract player backed by a simple board """
-    def __init__(self):
+    def __init__(self, viewer):
+        self.viewer = viewer
         self.board = Board()
-        self.board_viewer = None
         self.play_both_sides = False
 
     def play(self, other_x, other_y) -> tuple:
@@ -32,17 +32,15 @@ class BasePlayer(Player):
         return x, y
 
     def do_select(self, x, y):
-        if self.board_viewer is None:
-            return
-        self.board_viewer.player_selects(x, y)
+        self.viewer.player_selects(x, y)
 
     def do_play(self) -> tuple:
         raise NotImplementedError
 
 
 class RandomPlayer(BasePlayer):
-    def __init__(self, seed=None, sleep_sec=0):
-        super().__init__()
+    def __init__(self, viewer, seed=None, sleep_sec=0):
+        super().__init__(viewer)
         self.rand = Random(seed)
         self.sleep_sec = sleep_sec
 
@@ -59,8 +57,8 @@ class RandomPlayer(BasePlayer):
 
 
 class StdinPlayer(BasePlayer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, viewer):
+        super().__init__(viewer)
         self.selected = (2, 2)
 
     def do_play(self) -> tuple:

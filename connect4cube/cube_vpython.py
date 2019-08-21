@@ -1,20 +1,20 @@
 from vpython import sphere, vector, canvas, color
 
 
-class VPythonCube():
+class VPythonCube:
     """
     A Mockup class for local pingpong LED debugging
     """
     no_color = color.white * 0.25
 
     def __init__(self):
-        c = canvas()
+        self.canvas = canvas()
         self.pixels = [None] * 125
         for x in range(5):
             for y in range(5):
                 for z in range(5):
                     pxid = self.xyz2pxid(x, y, z)
-                    led = sphere(canvas=c,
+                    led = sphere(canvas=self.canvas,
                                  pos=vector(y - 2, z - 2, x - 2),
                                  radius=0.2,  # pingpong ball diameter is 40mm, distance between 'em 100mm
                                  color=self.no_color)
