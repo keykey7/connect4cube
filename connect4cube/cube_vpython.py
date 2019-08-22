@@ -48,7 +48,8 @@ def handle_mock_gpio(event):
         "left": 6,
         "right": 13,
         " ": 12,
-        "\n": 12
+        "\n": 12,
+        "r": 16
     }.get(event.key, 0)
     if pin != 0:
         pin_dev = Device.pin_factory.pin(pin)

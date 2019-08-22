@@ -15,7 +15,7 @@ class DemoInterrupted(RuntimeError):
 
 class DemoPlayer(GpioPlayer):
     def sleep_or_die(self):
-        if self.clicked:
+        if self.reset_clicked:
             raise DemoInterrupted()
         sleep(0.4)
 
@@ -70,4 +70,4 @@ class DemoPlayer(GpioPlayer):
     def button_pressed(self):
         with self.lock:
             LOG.debug("GPIO button pressed, interrupting demo")
-            self.clicked = True
+            self.reset_clicked = True

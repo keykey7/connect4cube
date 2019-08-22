@@ -16,20 +16,26 @@ if not is_a_raspberry():
     Device.pin_factory = MockFactory()
 
 # must come AFTER mocking gpio pins
-from connect4cube.player_gpio import GpioPlayer, PlayerTimeoutError  # noqa: E402
+from connect4cube.player_gpio import GpioPlayer, PlayerTimeoutError, PlayerResetError  # noqa: E402
 
 
 def human_player():
-    viewer = LedViewer(mode=CYCLE)
-    player = GpioPlayer(viewer)
-    player.play_both_sides = True
-    try:
-        Game(player, player, viewer).play()
-    except PlayerTimeoutError:
-        viewer.finish([])
-        LOG.warning("player idle for too long")
-    player.close()
-    viewer.close()
+    stopped = False
+    while not stopped:
+        viewer = LedViewer(mode=CYCLE)
+        player = GpioPlayer(viewer)
+        player.play_both_sides = True
+        try:
+            Game(player, player, viewer).play()
+        except PlayerTimeoutError:
+            viewer.finish([])
+            LOG.warning("player idle for too long")
+            stopped = True
+        except PlayerResetError:
+            viewer.finish([])
+            LOG.debug("reset game")
+        player.close()
+        viewer.close()
 
 
 def demo_player():
@@ -42,9 +48,8 @@ def demo_player():
             Game(player, player, viewer).play()
         except DemoInterrupted:
             stopped = True
-        finally:
-            player.close()
-            viewer.close()
+        player.close()
+        viewer.close()
 
 
 if __name__ == "__main__":
