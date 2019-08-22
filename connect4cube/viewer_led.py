@@ -78,7 +78,7 @@ class LedViewer(BoardViewer):
             self.cube.draw(animation_cube)
             self.cube.show()
 
-            sleep(0.1)
+            sleep(0.01)
 
     def get_z(self, x, y):
         z = 4
@@ -143,7 +143,7 @@ class SelectAnimation(AnimationBase):
                 if diff <= 1:
                     c = tuple(map(lambda c: c * (1 - diff), color))
                     cube[self.x][self.y][z] = c
-            self.z_a -= 0.2
+            self.z_a -= 0.1
             if self.z_a < self.z - 1:
                 self.z_a = 5
         return cube
@@ -179,19 +179,19 @@ class FinishAnimation(AnimationBase):
             else:
                 color = (0, 0, 255)
             if self.state == self.State.FLASH:
-                color = tuple(map(lambda c: c - self.counter * 20, color))
+                color = tuple(map(lambda c: c - self.counter * 5, color))
                 for x in range(5):
                     for y in range(5):
                         for z in range(5):
                             cube[x][y][z] = color
-                if self.counter >= 12:
+                if self.counter >= 60:
                     self.counter = -1
                     self.state = self.State.BLINK
             elif self.state == self.State.BLINK:
-                color = tuple(map(lambda c: c - self.counter % 7 * (c // 6), color))
+                color = tuple(map(lambda c: int(c - self.counter % 50 * (c / 50)), color))
                 for c in self.winning_coords:
                     cube[c[0]][c[1]][c[2]] = color
-                if self.counter >= 41:
+                if self.counter >= 300:
                     self.done = True
             self.counter += 1
         return cube
