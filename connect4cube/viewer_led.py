@@ -125,18 +125,14 @@ class AnimationBase():
 
 
 class SelectAnimation(AnimationBase):
-    FADE_OUT_TIME = 100
-
     def __init__(self, x, y, z, c):
         super().__init__()
         self.done = False
-        self.stop = False
         self.x = x
         self.y = y
         self.z = z
         self.c = c
         self.z_a = 5
-        self.counter = 0
 
     def animate(self, cube) -> list:
         if not self.done:
@@ -151,31 +147,18 @@ class SelectAnimation(AnimationBase):
                 draw_color = (0, 0, 0)
                 if diff <= 1:
                     draw_color = tuple(map(lambda c: int(c * (1 - diff)), player_color))
-                if self.stop:
-                    # fade out
-                    draw_color = tuple(map(lambda c: int(c * (1 - self.counter / self.FADE_OUT_TIME)), draw_color))
-                    self.counter += 1
-                    if self.counter == self.FADE_OUT_TIME:
-                        self.done = True
-                else:
-                    draw_color = tuple(map(lambda c, p: int(max(p * 0.1, c)), draw_color, player_color))
+                draw_color = tuple(map(lambda c, p: int(max(p * 0.1, c)), draw_color, player_color))
                 cube[self.x][self.y][z] = draw_color
             self.z_a -= 0.1
             if self.z_a < self.z - 1:
                 self.z_a = 5
-                if self.stop:
-                    self.done = True
         return cube
 
     def is_done(self) -> bool:
         return self.done
 
-    def stop(self):
-        self.stop = True
-        pass
-
     def new_animation_available(self):
-        self.stop = True
+        self.done = True
 
 
 class FinishAnimation(AnimationBase):
@@ -223,9 +206,6 @@ class FinishAnimation(AnimationBase):
     def is_done(self) -> bool:
         return self.done
 
-    def stop(self):
-        pass
-
     def is_blocking(self):
         return True
 
@@ -239,9 +219,6 @@ class PlayAnimation(AnimationBase):
 
     def is_done(self) -> bool:
         return True
-
-    def stop(self):
-        pass
 
     def is_blocking(self):
         return True
