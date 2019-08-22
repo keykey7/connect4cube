@@ -19,6 +19,9 @@ class BoardViewer:
     def finish(self, winning_coords):
         pass
 
+    def close(self):
+        pass
+
 
 class StdoutViewer(BoardViewer):
     header = "  Y->         Z1          Z2          Z3            !{} #{}\n"

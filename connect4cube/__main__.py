@@ -25,6 +25,7 @@ def human_player():
     player.play_both_sides = True
     Game(player, player, viewer).play()
     player.close()
+    viewer.close()
 
 
 def demo_player():
@@ -39,6 +40,7 @@ def demo_player():
             stopped = True
         finally:
             player.close()
+            viewer.close()
 
 
 if __name__ == "__main__":

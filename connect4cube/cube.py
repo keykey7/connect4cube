@@ -24,6 +24,12 @@ class Cube:
         def set_color(self, x, y, z, r, g, b):
             self.cube.set_color(x, y, z, r, g, b)
 
+        def draw(self, cube):
+            for x in range(5):
+                for y in range(5):
+                    for z in range(5):
+                        self.cube.set_color(x, y, z, *cube[x][y][z])
+
         def show(self):
             self.cube.show()
 
