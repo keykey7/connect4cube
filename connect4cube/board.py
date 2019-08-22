@@ -39,6 +39,17 @@ class Board:
             return True
         return False
 
+    def unmove(self, x, y):
+        z = 4
+        while self.cube[x][y][z] == EMPTY:
+            assert z > 0
+            z -= 1
+        self.round -= 1
+        self.next_color = RED if self.next_color == BLUE else BLUE
+        assert self.cube[x][y][z] == self.next_color
+        self.cube[x][y][z] = EMPTY
+        self.winning_move = None
+
     def field(self, x, y, z):
         assert 0 <= x < 5 and 0 <= y < 5 and 0 <= z < 5
         return self.cube[x][y][z]
