@@ -1,4 +1,5 @@
 from queue import Queue, Empty
+from random import Random
 from threading import Thread, Event, current_thread
 
 from connect4cube import RED, BLUE, EMPTY
@@ -253,11 +254,10 @@ class FieldColorsAnimation(AnimationBase):
 
 
 class AnimationState():
-    VARIANCE = 15
-    START = 85
-
     def __init__(self, mode):
-        self.color = self.START
+        self.start = Random().randint(0, 255)
+        self.variance = 15
+        self.color = self.start
         self.dir = 1
         self.mode = mode
         pass
@@ -273,7 +273,7 @@ class AnimationState():
     def update(self):
         self.color += self.dir
         if self.mode == CYCLE:
-            if self.color == self.START + self.VARIANCE or self.color == self.START - self.VARIANCE:
+            if self.color == self.start + self.variance or self.color == self.start - self.variance:
                 self.dir = -self.dir
         elif self.mode == RAINBOW:
             self.color += 1
