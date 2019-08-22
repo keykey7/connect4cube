@@ -2,6 +2,7 @@ import logging
 import sys
 
 from connect4cube.game import Game
+from connect4cube.player_demo import DemoPlayer, DemoInterrupted
 from connect4cube.viewer_led import LedViewer
 from connect4cube.util import is_a_raspberry
 
@@ -17,13 +18,30 @@ if not is_a_raspberry():
 # must come AFTER mocking gpio pins
 from connect4cube.player_gpio import GpioPlayer  # noqa: E402
 
-while True:
+
+def human_player():
     viewer = LedViewer()
-    player1 = GpioPlayer(viewer)
-    player1.play_both_sides = True
-    player2 = player1
-    Game(player1, player2, viewer).play()
-    player1.close()
+    player = GpioPlayer(viewer)
+    player.play_both_sides = True
+    Game(player, player, viewer).play()
+    player.close()
+
+
+def demo_player():
+    stopped = False
+    while not stopped:
+        viewer = LedViewer()
+        player = DemoPlayer(viewer)
+        player.play_both_sides = True
+        try:
+            Game(player, player, viewer).play()
+        except DemoInterrupted:
+            stopped = True
+        finally:
+            player.close()
+
 
 if __name__ == "__main__":
-    pass  # only here for the play button
+    while True:
+        demo_player()
+        human_player()
