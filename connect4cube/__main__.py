@@ -7,8 +7,8 @@ from connect4cube.viewer_led import LedViewer, CYCLE, RAINBOW
 from connect4cube.util import is_a_raspberry
 
 
-logger = logging.getLogger(__name__)
-logger.debug("sys.path=" + ":".join(sys.path))
+LOG = logging.getLogger(__name__)
+LOG.debug("sys.path=" + ":".join(sys.path))
 
 if not is_a_raspberry():
     from gpiozero.pins.mock import MockFactory
@@ -16,14 +16,18 @@ if not is_a_raspberry():
     Device.pin_factory = MockFactory()
 
 # must come AFTER mocking gpio pins
-from connect4cube.player_gpio import GpioPlayer  # noqa: E402
+from connect4cube.player_gpio import GpioPlayer, PlayerTimeoutError  # noqa: E402
 
 
 def human_player():
     viewer = LedViewer(mode=CYCLE)
     player = GpioPlayer(viewer)
     player.play_both_sides = True
-    Game(player, player, viewer).play()
+    try:
+        Game(player, player, viewer).play()
+    except PlayerTimeoutError:
+        viewer.finish([])
+        LOG.warning("player idle for too long")
     player.close()
     viewer.close()
 

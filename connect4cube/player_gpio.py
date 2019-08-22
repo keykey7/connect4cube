@@ -1,5 +1,5 @@
 import logging
-from time import sleep
+from time import sleep, time
 from threading import Lock
 
 from gpiozero import Button
@@ -15,7 +15,7 @@ class GpioPlayer(BasePlayer):
     A binary-joystick controlled player using RasPi GPIOs
     https://gpiozero.readthedocs.io/en/stable/
     """
-    def __init__(self, viewer, north=19, east=13, south=26, west=6, button1=12):
+    def __init__(self, viewer, north=19, east=13, south=26, west=6, button1=12, button2=16):
         """
         all pin numbers in BMC, see https://pinout.xyz/
         """
@@ -25,21 +25,25 @@ class GpioPlayer(BasePlayer):
             east: lambda: self.axis_pressed(0, 1),
             south: lambda: self.axis_pressed(1, 0),
             west: lambda: self.axis_pressed(0, -1),
-            button1: self.button_pressed
+            button1: self.button_pressed,
+            button2: self.button_pressed
         }
         self.buttons = []
         for pin, fn in pin2fn.items():
             button = Button(pin, hold_repeat=True, hold_time=0.4)
             button.when_pressed = fn
-            if pin != button1:  # button press shouldn't be repeatable, for direction repeat is ok
+            if pin != button1 and pin != button2:
+                # button press shouldn't be repeatable, for direction repeat is ok
                 button.when_held = fn
             self.buttons.append(button)
         self.clicked = False
         self.selected = (2, 2)
         self.lock = Lock()
+        self.last_interaction = 0
 
     def axis_pressed(self, dx, dy):
         with self.lock:
+            self.last_interaction = time()
             x, y = self.selected
             x += dx
             y += dy
@@ -55,6 +59,7 @@ class GpioPlayer(BasePlayer):
 
     def button_pressed(self):
         with self.lock:
+            self.last_interaction = time()
             LOG.debug("GPIO button pressed")
             if self.board.field(*self.selected, 4) != EMPTY:
                 LOG.debug("non playable location, ignoring")
@@ -65,7 +70,10 @@ class GpioPlayer(BasePlayer):
         self.clicked = False
         with self.lock:
             self.do_select(*self.selected)  # first show the last selected location
+        self.last_interaction = time()
         while not self.clicked:
+            if time() - self.last_interaction > 200:
+                raise PlayerTimeoutError()
             sleep(0.1)  # TODO: preferably an interrupt instead of polling here
         return self.selected
 
@@ -73,3 +81,7 @@ class GpioPlayer(BasePlayer):
         # close any GPIO ports or creating a new player instance will fail until the garbage collector runs
         for button in self.buttons:
             button.close()
+
+
+class PlayerTimeoutError(TimeoutError):
+    pass
