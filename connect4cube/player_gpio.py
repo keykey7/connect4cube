@@ -29,7 +29,7 @@ class GpioPlayer(BasePlayer):
         }
         self.buttons = []
         for pin, fn in pin2fn.items():
-            button = Button(pin, hold_repeat=True, hold_time=0.4, bounce_time=0.2)
+            button = Button(pin, hold_repeat=True, hold_time=0.4)
             button.when_pressed = fn
             if pin != button1:  # button press shouldn't be repeatable, for direction repeat is ok
                 button.when_held = fn
