@@ -3,7 +3,7 @@ import sys
 
 from connect4cube.game import Game
 from connect4cube.player_demo import DemoPlayer, DemoInterrupted
-from connect4cube.viewer_led import LedViewer
+from connect4cube.viewer_led import LedViewer, CYCLE, RAINBOW
 from connect4cube.util import is_a_raspberry
 
 
@@ -20,7 +20,7 @@ from connect4cube.player_gpio import GpioPlayer  # noqa: E402
 
 
 def human_player():
-    viewer = LedViewer()
+    viewer = LedViewer(mode=CYCLE)
     player = GpioPlayer(viewer)
     player.play_both_sides = True
     Game(player, player, viewer).play()
@@ -31,7 +31,7 @@ def human_player():
 def demo_player():
     stopped = False
     while not stopped:
-        viewer = LedViewer()
+        viewer = LedViewer(mode=RAINBOW)
         player = DemoPlayer(viewer)
         player.play_both_sides = True
         try:
