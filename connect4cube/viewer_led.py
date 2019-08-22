@@ -1,10 +1,13 @@
 from queue import Queue, Empty
 from threading import Thread, Event, current_thread
-from time import sleep
 
 from connect4cube import RED, BLUE, EMPTY
 from connect4cube.cube import Cube
 from connect4cube.viewer import BoardViewer
+from connect4cube.util import is_a_raspberry
+
+if not is_a_raspberry():
+    from time import sleep
 
 SELECT = 0
 PLAY = 1
@@ -78,7 +81,8 @@ class LedViewer(BoardViewer):
             self.cube.draw(animation_cube)
             self.cube.show()
 
-            sleep(0.01)
+            if not is_a_raspberry():
+                sleep(0.01)
 
     def get_z(self, x, y):
         z = 4
@@ -141,7 +145,7 @@ class SelectAnimation(AnimationBase):
             for z in range(self.z, 5):
                 diff = abs(self.z_a - z)
                 if diff <= 1:
-                    c = tuple(map(lambda c: c * (1 - diff), color))
+                    c = tuple(map(lambda c: int(c * (1 - diff)), color))
                     cube[self.x][self.y][z] = c
             self.z_a -= 0.1
             if self.z_a < self.z - 1:
@@ -159,6 +163,10 @@ class SelectAnimation(AnimationBase):
 
 
 class FinishAnimation(AnimationBase):
+    FLASH_TIME = 60
+    BLINK_TIME = 50
+    BLINK_COUNT = 6
+
     class State():
         FLASH = 0
         BLINK = 1
@@ -179,19 +187,19 @@ class FinishAnimation(AnimationBase):
             else:
                 color = (0, 0, 255)
             if self.state == self.State.FLASH:
-                color = tuple(map(lambda c: c - self.counter * 5, color))
+                color = tuple(map(lambda c: int(c - self.counter * (c / self.FLASH_TIME)), color))
                 for x in range(5):
                     for y in range(5):
                         for z in range(5):
                             cube[x][y][z] = color
-                if self.counter >= 60:
+                if self.counter >= self.FLASH_TIME:
                     self.counter = -1
                     self.state = self.State.BLINK
             elif self.state == self.State.BLINK:
-                color = tuple(map(lambda c: int(c - self.counter % 50 * (c / 50)), color))
+                color = tuple(map(lambda c: int(c - self.counter % self.BLINK_TIME * (c / self.BLINK_TIME)), color))
                 for c in self.winning_coords:
                     cube[c[0]][c[1]][c[2]] = color
-                if self.counter >= 300:
+                if self.counter >= self.BLINK_COUNT * self.BLINK_TIME - 1:
                     self.done = True
             self.counter += 1
         return cube
