@@ -39,9 +39,11 @@ class GpioPlayer(BasePlayer):
         self.clicked = False
         self.selected = (2, 2)
         self.lock = Lock()
+        self.last_interaction = 0
 
     def axis_pressed(self, dx, dy):
         with self.lock:
+            self.last_interaction = time()
             x, y = self.selected
             x += dx
             y += dy
@@ -57,6 +59,7 @@ class GpioPlayer(BasePlayer):
 
     def button_pressed(self):
         with self.lock:
+            self.last_interaction = time()
             LOG.debug("GPIO button pressed")
             if self.board.field(*self.selected, 4) != EMPTY:
                 LOG.debug("non playable location, ignoring")
@@ -67,9 +70,9 @@ class GpioPlayer(BasePlayer):
         self.clicked = False
         with self.lock:
             self.do_select(*self.selected)  # first show the last selected location
-        start = time()
+        self.last_interaction = time()
         while not self.clicked:
-            if time() - start > 1:
+            if time() - self.last_interaction > 200:
                 raise PlayerTimeoutError()
             sleep(0.1)  # TODO: preferably an interrupt instead of polling here
         return self.selected
