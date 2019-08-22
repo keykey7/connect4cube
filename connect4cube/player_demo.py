@@ -25,7 +25,17 @@ class DemoPlayer(GpioPlayer):
             for y in range(5):
                 if self.board.field(x, y, 4) == EMPTY:
                     valid_moves.append((x, y))
-        x, y = random.choice(valid_moves)
+        winmove = None
+        for x, y in valid_moves:
+            if self.board.move(x, y):
+                winmove = x, y
+            self.board.unmove(x, y)
+
+        if winmove is None:
+            x, y = random.choice(valid_moves)
+        else:
+            x, y = winmove
+
         sx, sy = self.selected
         while sx != x:
             sx += 1 if x > sx else -1
