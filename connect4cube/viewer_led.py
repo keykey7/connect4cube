@@ -189,6 +189,8 @@ class FinishAnimation(AnimationBase):
         if not self.done:
             color = None
             color = self.state.get_color(self.c)
+            if self.winning_coords == []:
+                color = [255, 255, 255]
             if self.finish_state == self.State.FLASH:
                 color = tuple(map(lambda c: int(c - self.counter * (c / self.FLASH_TIME)), color))
                 for x in range(5):
