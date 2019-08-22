@@ -23,6 +23,9 @@ class Board:
         viewer = StdoutViewer()
         return viewer.draw_str()
 
+    def change_player(self):
+        self.next_color = RED if self.next_color == BLUE else BLUE
+
     def move(self, x, y) -> bool:
         assert self.winning_move is None
         assert 0 <= x < 5 and 0 <= y < 5
@@ -32,7 +35,7 @@ class Board:
         assert z < 5
         current = self.next_color
         self.cube[x][y][z] = current
-        self.next_color = RED if self.next_color == BLUE else BLUE
+        self.change_player()
         self.round += 1
         if self.calc_winning_coords(x, y, z, current) is not None:
             self.winning_move = [x, y, z]
@@ -45,7 +48,7 @@ class Board:
             assert z > 0
             z -= 1
         self.round -= 1
-        self.next_color = RED if self.next_color == BLUE else BLUE
+        self.change_player()
         assert self.cube[x][y][z] == self.next_color
         self.cube[x][y][z] = EMPTY
         self.winning_move = None

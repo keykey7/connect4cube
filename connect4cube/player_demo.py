@@ -19,23 +19,38 @@ class DemoPlayer(GpioPlayer):
             raise DemoInterrupted()
         sleep(0.4)
 
-    def do_play(self) -> tuple:
+    def get_valid_moves(self):
         valid_moves = []
         for x in range(5):
             for y in range(5):
                 if self.board.field(x, y, 4) == EMPTY:
                     valid_moves.append((x, y))
-        winmove = None
+        return valid_moves
+
+    def best_move(self):
+        valid_moves = self.get_valid_moves()
+
+        # if we can win, we do it
         for x, y in valid_moves:
-            if self.board.move(x, y):
-                winmove = x, y
+            is_win = self.board.move(x, y)
             self.board.unmove(x, y)
+            if is_win:
+                return x, y
 
-        if winmove is None:
-            x, y = random.choice(valid_moves)
-        else:
-            x, y = winmove
+        # if the other could win, we prevent it (or at least on of 'em)
+        self.board.change_player()
+        for x, y in valid_moves:
+            is_win = self.board.move(x, y)
+            self.board.unmove(x, y)
+            if is_win:
+                self.board.change_player()
+                return x, y
+        self.board.change_player()
 
+        return random.choice(valid_moves)
+
+    def do_play(self) -> tuple:
+        x, y = self.best_move()
         sx, sy = self.selected
         while sx != x:
             sx += 1 if x > sx else -1
