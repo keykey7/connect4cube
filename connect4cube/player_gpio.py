@@ -8,6 +8,7 @@ from connect4cube import EMPTY
 from connect4cube.player import BasePlayer
 
 LOG = logging.getLogger(__name__)
+DEBOUNCE_TIME = 0.2
 
 
 class GpioPlayer(BasePlayer):
@@ -63,6 +64,9 @@ class GpioPlayer(BasePlayer):
 
     def drop_pressed(self):
         with self.lock:
+            if time() - self.last_interaction < DEBOUNCE_TIME:
+                LOG.debug("debounce: ignoring input")
+                return
             self.timeout = 200
             self.last_interaction = time()
             LOG.debug("GPIO drop button pressed")
@@ -73,6 +77,9 @@ class GpioPlayer(BasePlayer):
 
     def reset_pressed(self):
         with self.lock:
+            if time() - self.last_interaction < DEBOUNCE_TIME:
+                LOG.debug("debounce: ignoring input")
+                return
             LOG.debug("GPIO reset button pressed")
             self.reset_clicked = True
 
