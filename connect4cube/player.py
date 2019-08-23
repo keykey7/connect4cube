@@ -28,12 +28,12 @@ class BasePlayer(Player):
         if not self.play_both_sides:
             if other_x is not None and other_y is not None:
                 if other_x == -1 and other_y == -1:
-                    self.board.undo_last()
+                    self.board.undo()
                 else:
                     self.board.move(other_x, other_y)
         (x, y) = self.do_play()
         if x == -1 and y == -1:
-            self.board.undo_last()
+            self.board.undo()
         else:
             self.board.move(x, y)
         return x, y

@@ -33,7 +33,7 @@ class DemoPlayer(GpioPlayer):
         # if we can win, we do it
         for x, y in valid_moves:
             is_win = self.board.move(x, y)
-            self.board.unmove(x, y)
+            self.board.undo()
             if is_win:
                 return x, y
 
@@ -41,7 +41,7 @@ class DemoPlayer(GpioPlayer):
         self.board.change_player()
         for x, y in valid_moves:
             is_win = self.board.move(x, y)
-            self.board.unmove(x, y)
+            self.board.undo()
             if is_win:
                 self.board.change_player()
                 return x, y

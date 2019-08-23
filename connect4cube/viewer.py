@@ -17,7 +17,7 @@ class BoardViewer:
         pass
 
     def player_undoes(self):
-        self.board.undo_last()
+        self.board.undo()
 
     def finish(self, winning_coords):
         pass
