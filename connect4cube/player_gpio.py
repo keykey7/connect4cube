@@ -104,7 +104,7 @@ class GpioPlayer(BasePlayer):
                 raise PlayerTimeoutError()
             sleep(0.1)  # TODO: preferably an interrupt instead of polling here
         if self.undo_clicked:
-            self.selected = (-1, -1)
+            return (-1, -1)
         if self.reset_clicked:
             raise PlayerResetError()
         return self.selected

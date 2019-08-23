@@ -46,7 +46,7 @@ class Board:
 
     def undo(self):
         if len(self.history) == 0:
-            return (None, None)
+            return
         else:
             (x, y) = self.history.pop()
             z = 4
@@ -58,10 +58,13 @@ class Board:
             assert self.cube[x][y][z] == self.next_color
             self.cube[x][y][z] = EMPTY
             self.winning_move = None
-            if len(self.history) == 0:
-                return (None, None)
-            else:
-                return self.history[-1]
+            return
+
+    def get_last(self):
+        if len(self.history) == 0:
+            return (None, None)
+        else:
+            return self.history[-1]
 
     def field(self, x, y, z):
         assert 0 <= x < 5 and 0 <= y < 5 and 0 <= z < 5

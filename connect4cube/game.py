@@ -27,7 +27,8 @@ class Game:
             (x, y) = self.players[current_color].play(last_x, last_y)
             if x == -1 and y == -1:
                 self.viewer.player_undoes()
-                (last_x, last_y) = board.undo()
+                board.undo()
+                (last_x, last_y) = (-1, -1)
             else:
                 if 0 > x > 4 or 0 > y > 4:
                     raise RuleViolation("out of bounds move")

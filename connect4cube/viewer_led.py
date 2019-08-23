@@ -12,7 +12,8 @@ if not is_a_raspberry():
 
 SELECT = 0
 PLAY = 1
-FINISH = 2
+UNDO = 2
+FINISH = 3
 
 CYCLE = 0
 RAINBOW = 1
@@ -30,6 +31,12 @@ class LedViewer(BoardViewer):
 
     def player_plays(self, x, y):
         self.queue.put((PLAY, x, y))
+
+    def player_undoes(self):
+        last_move = self.board.get_last()
+        self.board.undo()
+        if last_move != (None, None):
+            self.queue.put((UNDO, *last_move))
 
     def player_selects(self, x, y):
         self.queue.put((SELECT, x, y))
@@ -60,6 +67,12 @@ class LedViewer(BoardViewer):
                         if self.board.next_color == RED:
                             c = BLUE
                         animation_list.append(PlayAnimation(animation_state, x, y, z, c))
+                    elif event[0] == UNDO:
+                        x = event[1]
+                        y = event[2]
+                        z = self.get_z(x, y)
+                        c = self.board.next_color
+                        animation_list.append(UndoAnimation(animation_state, x, y, z, c))
                     elif event[0] == SELECT:
                         x = event[1]
                         y = event[2]
@@ -145,7 +158,6 @@ class SelectAnimation(AnimationBase):
 
     def animate(self, cube) -> list:
         if not self.done:
-            player_color = None
             player_color = self.state.get_color(self.c)
 
             for z in range(self.z, 5):
@@ -224,6 +236,40 @@ class PlayAnimation(AnimationBase):
 
     def is_done(self) -> bool:
         return True
+
+    def is_blocking(self):
+        return True
+
+
+class UndoAnimation(AnimationBase):
+    def __init__(self, state, x, y, z, c):
+        super().__init__(state)
+        self.done = False
+        self.x = x
+        self.y = y
+        self.z = z
+        self.c = c
+        self.z_a = z
+
+    def animate(self, cube) -> list:
+        if not self.done:
+            player_color = None
+            player_color = self.state.get_color(self.c)
+
+            for z in range(self.z, 5):
+                diff = abs(self.z_a - z)
+                draw_color = (0, 0, 0)
+                if diff <= 1:
+                    draw_color = tuple(map(lambda c: int(c * (1 - diff)), player_color))
+                draw_color = tuple(map(lambda c, p: int(max(p * 0.1, c)), draw_color, player_color))
+                cube[self.x][self.y][z] = draw_color
+            self.z_a += 0.1
+            if self.z_a >= 5:
+                self.done = True
+        return cube
+
+    def is_done(self) -> bool:
+        return self.done
 
     def is_blocking(self):
         return True
