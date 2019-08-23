@@ -60,14 +60,12 @@ class LedViewer(BoardViewer):
                         if self.board.next_color == RED:
                             c = BLUE
                         animation_list.append(PlayAnimation(animation_state, x, y, z, c))
-                        pass
                     elif event[0] == SELECT:
                         x = event[1]
                         y = event[2]
                         z = self.get_z(x, y)
                         c = self.board.next_color
                         animation_list.append(SelectAnimation(animation_state, x, y, z, c))
-                        pass
                     elif event[0] == FINISH:
                         c = RED
                         if self.board.next_color == RED:
@@ -260,7 +258,6 @@ class AnimationState():
         self.color = self.start
         self.dir = 1
         self.mode = mode
-        pass
 
     def get_color(self, c) -> tuple:
         if c == RED:
@@ -271,13 +268,12 @@ class AnimationState():
             return (0, 0, 0)
 
     def update(self):
-        self.color += self.dir
+        self.color = (self.color + self.dir) % 256
         if self.mode == CYCLE:
-            if self.color == self.start + self.variance or self.color == self.start - self.variance:
+            if self.color == (self.start + self.variance) % 256 or self.color == (self.start - self.variance) % 256:
                 self.dir = -self.dir
         elif self.mode == RAINBOW:
-            self.color += 1
-            self.color %= 256
+            self.color = (self.color + 1) % 256
 
     def wheel(self, pos):
         # Input a value 0 to 255 to get a color value.
