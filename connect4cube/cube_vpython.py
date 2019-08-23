@@ -41,18 +41,24 @@ class VPythonCube:
 
 
 def handle_mock_gpio(event):
+    SHORT = 0
+    LONG = 1
     LOG.debug("keydown {}".format(event.key))
     pin = {
-        "up": 19,
-        "down": 26,
-        "left": 6,
-        "right": 13,
-        " ": 12,
-        "\n": 12,
-        "r": 16
-    }.get(event.key, 0)
-    if pin != 0:
-        pin_dev = Device.pin_factory.pin(pin)
+        "up": (19, SHORT),
+        "down": (26, SHORT),
+        "left": (6, SHORT),
+        "right": (13, SHORT),
+        " ": (12, SHORT),
+        "\n": (12, SHORT),
+        "r": (16, SHORT),
+        "R": (16, LONG)
+    }.get(event.key, (0, 0))
+    if pin != (0, 0):
+        pin_dev = Device.pin_factory.pin(pin[0])
         pin_dev.drive_low()
-        sleep(0.1)
+        if pin[1] == SHORT:
+            sleep(0.1)
+        else:
+            sleep(1)
         pin_dev.drive_high()

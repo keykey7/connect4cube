@@ -17,6 +17,7 @@ class Board:
         self.next_color = RED
         self.round = 0
         self.winning_move = None
+        self.last_move = None
 
     def __str__(self):
         from connect4cube.viewer import StdoutViewer  # otherwise circular deps
@@ -33,6 +34,7 @@ class Board:
         while z < 5 and self.cube[x][y][z] != EMPTY:
             z += 1
         assert z < 5
+        self.last_move = (x, y)
         current = self.next_color
         self.cube[x][y][z] = current
         self.change_player()
@@ -52,6 +54,11 @@ class Board:
         assert self.cube[x][y][z] == self.next_color
         self.cube[x][y][z] = EMPTY
         self.winning_move = None
+
+    def undo_last(self):
+        if self.last_move is not None:
+            self.unmove(*self.last_move)
+            self.last_move = None
 
     def field(self, x, y, z):
         assert 0 <= x < 5 and 0 <= y < 5 and 0 <= z < 5

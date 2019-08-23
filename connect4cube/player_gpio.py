@@ -22,23 +22,23 @@ class GpioPlayer(BasePlayer):
         """
         super().__init__(viewer)
         pin2fn = {
-            north: lambda: self.axis_pressed(-1, 0),
-            east: lambda: self.axis_pressed(0, 1),
-            south: lambda: self.axis_pressed(1, 0),
-            west: lambda: self.axis_pressed(0, -1),
-            drop: self.drop_pressed,
-            reset: self.reset_pressed
+            north: (lambda: self.axis_pressed(-1, 0),) * 2,
+            east: (lambda: self.axis_pressed(0, 1),) * 2,
+            south: (lambda: self.axis_pressed(1, 0),) * 2,
+            west: (lambda: self.axis_pressed(0, -1),) * 2,
+            drop: (self.drop_pressed, None),
+            reset: (self.undo_pressed, self.reset_pressed)
         }
         self.buttons = []
-        for pin, fn in pin2fn.items():
+        for pin, fns in pin2fn.items():
             button = Button(pin, hold_repeat=True, hold_time=0.4)
-            button.when_pressed = fn
-            if pin != drop and pin != reset:
-                # button press shouldn't be repeatable, for direction repeat is ok
-                button.when_held = fn
+            button.when_pressed = fns[0]
+            if fns[1] is not None:
+                button.when_held = fns[1]
             self.buttons.append(button)
         self.drop_clicked = False
         self.reset_clicked = False
+        self.undo_clicked = False
         self.selected = (2, 2)
         self.lock = Lock()
         self.last_interaction = 0
@@ -75,6 +75,14 @@ class GpioPlayer(BasePlayer):
                 return
             self.drop_clicked = True
 
+    def undo_pressed(self):
+        with self.lock:
+            if time() - self.last_interaction < DEBOUNCE_TIME:
+                LOG.debug("debounce: ignoring input")
+                return
+            LOG.debug("GPIO undo button pressed")
+            self.undo_clicked = True
+
     def reset_pressed(self):
         with self.lock:
             if time() - self.last_interaction < DEBOUNCE_TIME:
@@ -85,13 +93,18 @@ class GpioPlayer(BasePlayer):
 
     def do_play(self) -> tuple:
         self.drop_clicked = False
+        self.undo_clicked = False
+        if self.selected == (-1, -1):
+            self.selected = (2, 2)
         with self.lock:
             self.do_select(*self.selected)  # first show the last selected location
         self.last_interaction = time()
-        while not self.drop_clicked and not self.reset_clicked:
+        while not self.drop_clicked and not self.reset_clicked and not self.undo_clicked:
             if time() - self.last_interaction > self.timeout:
                 raise PlayerTimeoutError()
             sleep(0.1)  # TODO: preferably an interrupt instead of polling here
+        if self.undo_clicked:
+            self.selected = (-1, -1)
         if self.reset_clicked:
             raise PlayerResetError()
         return self.selected

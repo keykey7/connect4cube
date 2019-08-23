@@ -25,10 +25,17 @@ class BasePlayer(Player):
 
     def play(self, other_x, other_y) -> tuple:
         assert self.board.round < 5 * 5 * 5
-        if other_x is not None and not self.play_both_sides:
-            self.board.move(other_x, other_y)
+        if not self.play_both_sides:
+            if other_x is not None and other_y is not None:
+                if other_x == -1 and other_y == -1:
+                    self.board.undo_last()
+                else:
+                    self.board.move(other_x, other_y)
         (x, y) = self.do_play()
-        self.board.move(x, y)
+        if x == -1 and y == -1:
+            self.board.undo_last()
+        else:
+            self.board.move(x, y)
         return x, y
 
     def do_select(self, x, y):
@@ -36,6 +43,9 @@ class BasePlayer(Player):
 
     def do_play(self) -> tuple:
         raise NotImplementedError
+
+    def close(self):
+        pass
 
 
 class RandomPlayer(BasePlayer):

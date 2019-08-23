@@ -25,18 +25,24 @@ class Game:
         while board.round <= MAX_ROUND:
             current_color = board.next_color
             (x, y) = self.players[current_color].play(last_x, last_y)
-            if 0 > x > 4 or 0 > y > 4:
-                raise RuleViolation("out of bounds move")
-            if board.field(x, y, 4) != EMPTY:
-                raise RuleViolation("already full at {},{}".format(x, y))
-            is_winning = board.move(x, y)
-            LOG.debug("player {} plays to {},{}".format(current_color, x, y))
-            self.viewer.player_plays(x, y)
-            if is_winning:
-                LOG.debug("player {} wins!".format(current_color))
-                self.viewer.finish(board.winning_coords())
-                return current_color
-            (last_x, last_y) = (x, y)
+            if x == -1 and y == -1:
+                self.viewer.player_undoes()
+                board.undo_last()
+                last_x = -1
+                last_y = -1
+            else:
+                if 0 > x > 4 or 0 > y > 4:
+                    raise RuleViolation("out of bounds move")
+                if board.field(x, y, 4) != EMPTY:
+                    raise RuleViolation("already full at {},{}".format(x, y))
+                is_winning = board.move(x, y)
+                LOG.debug("player {} plays to {},{}".format(current_color, x, y))
+                self.viewer.player_plays(x, y)
+                if is_winning:
+                    LOG.debug("player {} wins!".format(current_color))
+                    self.viewer.finish(board.winning_coords())
+                    return current_color
+                (last_x, last_y) = (x, y)
         LOG.debug("game ended in a draw")
         self.viewer.finish([])
         return EMPTY
