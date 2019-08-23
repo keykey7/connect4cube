@@ -15,7 +15,7 @@ class VPythonCube:
     no_color = color.white * 0.25
 
     def __init__(self):
-        self.canvas = canvas()
+        self.canvas = canvas(width=1900, height=900)
         self.pixels = [None] * 125
         for x in range(5):
             for y in range(5):
