@@ -209,8 +209,11 @@ class FinishAnimation(AnimationBase):
                         for z in range(5):
                             cube[x][y][z] = color
                 if self.counter >= self.FLASH_TIME:
-                    self.counter = -1
-                    self.finish_state = self.State.BLINK
+                    if self.winning_coords == []:
+                        self.done = True
+                    else:
+                        self.counter = -1
+                        self.finish_state = self.State.BLINK
             elif self.finish_state == self.State.BLINK:
                 color = tuple(map(lambda c: int(c - self.counter % self.BLINK_TIME * (c / self.BLINK_TIME)), color))
                 for c in self.winning_coords:
