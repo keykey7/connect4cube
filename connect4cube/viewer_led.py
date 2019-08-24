@@ -78,7 +78,8 @@ class LedViewer(BoardViewer):
                         y = event[2]
                         z = self.get_z(x, y)
                         c = self.board.next_color
-                        animation_list.append(SelectAnimation(animation_state, x, y, z, c))
+                        top = self.board.field(x, y, z) is not EMPTY
+                        animation_list.append(SelectAnimation(animation_state, x, y, z, c, top))
                     elif event[0] == FINISH:
                         c = RED
                         if self.board.next_color == RED:
@@ -147,7 +148,7 @@ class AnimationBase():
 
 
 class SelectAnimation(AnimationBase):
-    def __init__(self, state, x, y, z, c):
+    def __init__(self, state, x, y, z, c, top):
         super().__init__(state)
         self.done = False
         self.x = x
@@ -155,6 +156,7 @@ class SelectAnimation(AnimationBase):
         self.z = z
         self.c = c
         self.z_a = 5
+        self.top = top
 
     def animate(self, cube) -> list:
         if not self.done:
@@ -162,11 +164,16 @@ class SelectAnimation(AnimationBase):
 
             for z in range(self.z, 5):
                 diff = abs(self.z_a - z)
-                draw_color = (0, 0, 0)
+                dimmed_color = (0, 0, 0)
+                draw_color = player_color
+                # the one one the bottom is glowing white, except when there is no space left
+                if z == self.z and not self.top:
+                    draw_color = (255, 255, 255)
                 if diff <= 1:
-                    draw_color = tuple(map(lambda c: int(c * (1 - diff)), player_color))
-                draw_color = tuple(map(lambda c, p: int(max(p * 0.1, c)), draw_color, player_color))
-                cube[self.x][self.y][z] = draw_color
+                    dimmed_color = tuple(map(lambda c: int(c * (1 - diff)), draw_color))
+                # always show a minimum of color on the selected line
+                dimmed_color = tuple(map(lambda c, p: int(max(p * 0.1, c)), dimmed_color, draw_color))
+                cube[self.x][self.y][z] = dimmed_color
             self.z_a -= 0.1
             if self.z_a < self.z - 1:
                 self.z_a = 5
@@ -256,16 +263,14 @@ class UndoAnimation(AnimationBase):
 
     def animate(self, cube) -> list:
         if not self.done:
-            player_color = None
             player_color = self.state.get_color(self.c)
 
             for z in range(self.z, 5):
                 diff = abs(self.z_a - z)
-                draw_color = (0, 0, 0)
+                dimmed_color = (0, 0, 0)
                 if diff <= 1:
-                    draw_color = tuple(map(lambda c: int(c * (1 - diff)), player_color))
-                draw_color = tuple(map(lambda c, p: int(max(p * 0.1, c)), draw_color, player_color))
-                cube[self.x][self.y][z] = draw_color
+                    dimmed_color = tuple(map(lambda c: int(c * (1 - diff)), player_color))
+                cube[self.x][self.y][z] = dimmed_color
             self.z_a += 0.1
             if self.z_a >= 5:
                 self.done = True
