@@ -17,7 +17,7 @@ class DemoPlayer(GpioPlayer):
     def sleep_or_die(self):
         if self.reset_clicked:
             raise DemoInterrupted()
-        sleep(0.4)
+        sleep(0.8)
 
     def get_valid_moves(self):
         valid_moves = []
