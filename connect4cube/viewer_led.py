@@ -166,13 +166,15 @@ class SelectAnimation(AnimationBase):
                 diff = abs(self.z_a - z)
                 dimmed_color = (0, 0, 0)
                 draw_color = player_color
+                min_dim_factor = 0.1
                 # the one one the bottom is glowing white, except when there is no space left
                 if z == self.z and not self.top:
                     draw_color = (255, 255, 255)
+                    min_dim_factor = 0.3
                 if diff <= 1:
                     dimmed_color = tuple(map(lambda c: int(c * (1 - diff)), draw_color))
                 # always show a minimum of color on the selected line
-                dimmed_color = tuple(map(lambda c, p: int(max(p * 0.1, c)), dimmed_color, draw_color))
+                dimmed_color = tuple(map(lambda c, p: int(max(p * min_dim_factor, c)), dimmed_color, draw_color))
                 cube[self.x][self.y][z] = dimmed_color
             self.z_a -= 0.1
             if self.z_a < self.z - 1:
