@@ -199,7 +199,7 @@ class TextWriter():
                         continue
                     if y + pos < 0 or y + pos >= 5:
                         continue
-                    self.cube.add_color(4, y + pos, z, *color)
+                    self.cube.set_color(4, y + pos, z, *color)
 
     def clear(self):
         for y in range(5):
