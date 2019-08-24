@@ -1,11 +1,11 @@
 import logging
 import sys
 
+from connect4cube.ai.player_ai_demo import AiDemoPlayer
 from connect4cube.game import Game
-from connect4cube.player_demo import DemoPlayer, DemoInterrupted
-from connect4cube.viewer_led import LedViewer, CYCLE, RAINBOW
+from connect4cube.player_demo import DemoInterrupted
 from connect4cube.util import is_a_raspberry
-
+from connect4cube.viewer_led import LedViewer, CYCLE, RAINBOW
 
 LOG = logging.getLogger(__name__)
 LOG.debug("sys.path=" + ":".join(sys.path))
@@ -13,6 +13,7 @@ LOG.debug("sys.path=" + ":".join(sys.path))
 if not is_a_raspberry():
     from gpiozero.pins.mock import MockFactory
     from gpiozero import Device
+
     Device.pin_factory = MockFactory()
 
 # must come AFTER mocking gpio pins
@@ -42,7 +43,7 @@ def demo_player():
     stopped = False
     while not stopped:
         viewer = LedViewer(mode=RAINBOW)
-        player = DemoPlayer(viewer)
+        player = AiDemoPlayer(viewer)
         player.play_both_sides = True
         try:
             Game(player, player, viewer).play()

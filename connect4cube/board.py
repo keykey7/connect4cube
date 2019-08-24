@@ -19,11 +19,6 @@ class Board:
         self.winning_move = None
         self.history = []
 
-    def __str__(self):
-        from connect4cube.viewer import StdoutViewer  # otherwise circular deps
-        viewer = StdoutViewer()
-        return viewer.draw_str()
-
     def change_player(self):
         self.next_color = RED if self.next_color == BLUE else BLUE
 

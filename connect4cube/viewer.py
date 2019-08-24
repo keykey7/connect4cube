@@ -48,7 +48,6 @@ class StdoutViewer(BoardViewer):
                     v = self.board.field(x, y, z)
                     vs = self.value2char.get(v, "{}?".format(v))
                     if select_coords is not None and [x, y, z] in select_coords:
-                        LOG.debug("stdoutboard selected {},{},{}".format(x, y, z))
                         s = s[:-1]  # need the previous space
                         vs = self.select_value(vs)
                     s += vs

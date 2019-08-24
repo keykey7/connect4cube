@@ -71,16 +71,6 @@
             ],
             "version": "==4.18"
         },
-        "rpi-ws281x": {
-            "hashes": [
-                "sha256:262ad65562333c20ccb1f10850f2413521dd300a2af16de32cbfa27b5b8353ac",
-                "sha256:bad191da9945d7ba9fe0f88ab70d04e6af1b554f520eaa50415f7bff1fa31150",
-                "sha256:d06cd31217dec40d715a3a07ccb2b4b0b0719527c5aa020cbdd77d0c0b31d113",
-                "sha256:dbbb04947b3166d96ba48a82702be9e9e762eb78922434e491d0de958f8fe8c7",
-                "sha256:eb2365f513b333fb1574131a1a719b66ffd252624c192ac0e954a5970cfea84f"
-            ],
-            "version": "==4.2.2"
-        },
         "rpi.gpio": {
             "hashes": [
                 "sha256:7424bc6c205466764f30f666c18187a0824077daf20b295c42f08aea2cb87d3f"
@@ -92,6 +82,7 @@
             "hashes": [
                 "sha256:4314e52f573d95233c907f307558893313a8a606e197e77bb711526b0e179e80"
             ],
+            "markers": "sys_platform == 'linux'",
             "version": "==3.4"
         },
         "sysv-ipc": {
@@ -100,6 +91,7 @@
                 "sha256:b59fbd42c9de27b42fdda69c4aa7556312112dc6ac7246e44cd875cf049e4273",
                 "sha256:cd70548a92218ede2da499080b31e52f1d7cf60716c5cc7d468ec89e8b73c530"
             ],
+            "markers": "platform_system != 'Windows'",
             "version": "==1.0.0"
         }
     },
@@ -423,10 +415,10 @@
         },
         "notebook": {
             "hashes": [
-                "sha256:0be97e939cec73cde37fc4d2a606a6f497a9addf3afcf61a09a21b0c35e699c5",
-                "sha256:5c16dbf4fa824db19de43637ebfb24bcbd3b4f646e5d6a0414ed3a376d6bc951"
+                "sha256:660976fe4fe45c7aa55e04bf4bccb9f9566749ff637e9020af3422f9921f9a5d",
+                "sha256:b0a290f5cc7792d50a21bec62b3c221dd820bf00efa916ce9aeec4b5354bde20"
             ],
-            "version": "==6.0.0"
+            "version": "==6.0.1"
         },
         "numpy": {
             "hashes": [
@@ -562,11 +554,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:3805d095f1ea279b9870c3eeae5dddf8a81b10952c8835cd628cf1875b0ef031",
-                "sha256:abc562321c2d190dd63c2faadf70b86b7af21a553b61f0df5f5e1270717dc5a3"
+                "sha256:95b1f6db806e5b1b5b443efeb58984c24945508f93a866c1719e1a507a957d7c",
+                "sha256:c3d5020755f70c82eceda3feaf556af9a341334414a8eca521a18f463bcead88"
             ],
             "index": "pypi",
-            "version": "==5.1.0"
+            "version": "==5.1.1"
         },
         "pytest-cov": {
             "hashes": [
@@ -615,10 +607,10 @@
         },
         "qtconsole": {
             "hashes": [
-                "sha256:0877c4c66cb4f102dc796dc63a08ddfa55a981c36a83690b45dee819d15c1a38",
-                "sha256:84b43391ad0a54d91a628dbcd95562651052ea20457a75af85a66fea35397950"
+                "sha256:40f53ab58ef77aa4b53aca1ee314eed873d05952dec22d2ab84d20660943b7de",
+                "sha256:756bdcb6de6900dc50b14430accff2e47b846c3e7820e04075d4067b4c0ab52f"
             ],
-            "version": "==4.5.3"
+            "version": "==4.5.4"
         },
         "send2trash": {
             "hashes": [
