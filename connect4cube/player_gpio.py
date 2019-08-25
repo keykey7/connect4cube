@@ -42,13 +42,21 @@ class GpioPlayer(BasePlayer):
         self.selected = (2, 2)
         self.lock = Lock()
         self.last_interaction = 0
+        self.last_axis_time = 0
+        self.last_drop_time = 0
+        self.last_undo_time = 0
+        self.last_direction = (0, 0)
         # short timeout after a game starts, it is increased on the first input
         self.timeout = 30
 
     def axis_pressed(self, dx, dy):
         with self.lock:
+            if time() - self.last_axis_time < DEBOUNCE_TIME and (-dx, -dy) == self.last_direction:
+                LOG.debug("debounce: ignoring input")
+                return
             self.timeout = 200
-            self.last_interaction = time()
+            self.last_interacted = self.last_axis_time = time()
+            self.last_direction = (dx, dy)
             x, y = self.selected
             x += dx
             y += dy
@@ -64,11 +72,11 @@ class GpioPlayer(BasePlayer):
 
     def drop_pressed(self):
         with self.lock:
-            if time() - self.last_interaction < DEBOUNCE_TIME:
+            if time() - self.last_drop_time < DEBOUNCE_TIME:
                 LOG.debug("debounce: ignoring input")
                 return
             self.timeout = 200
-            self.last_interaction = time()
+            self.last_interacted = self.last_drop_time = time()
             LOG.debug("GPIO drop button pressed")
             if self.board.field(*self.selected, 4) != EMPTY:
                 LOG.debug("non playable location, ignoring")
@@ -77,9 +85,11 @@ class GpioPlayer(BasePlayer):
 
     def undo_pressed(self):
         with self.lock:
-            if time() - self.last_interaction < DEBOUNCE_TIME:
+            if time() - self.last_undo_time < DEBOUNCE_TIME:
                 LOG.debug("debounce: ignoring input")
                 return
+            self.timeout = 200
+            self.last_interacted = self.last_undo_time = time()
             LOG.debug("GPIO undo button pressed")
             self.undo_clicked = True
 
@@ -98,7 +108,7 @@ class GpioPlayer(BasePlayer):
             self.selected = (2, 2)
         with self.lock:
             self.do_select(*self.selected)  # first show the last selected location
-        self.last_interaction = time()
+        self.last_interaction = self.last_axis_time = self.last_drop_time = self.last_undo_time = time()
         while not self.drop_clicked and not self.reset_clicked and not self.undo_clicked:
             if time() - self.last_interaction > self.timeout:
                 raise PlayerTimeoutError()
