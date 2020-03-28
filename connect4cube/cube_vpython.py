@@ -12,7 +12,7 @@ class VPythonCube:
     """
     A Mockup class for local pingpong LED debugging
     """
-    no_color = color.white * 0.25
+    no_color = color.white * 0.2
 
     def __init__(self):
         self.canvas = canvas(width=1900, height=900)
@@ -24,7 +24,8 @@ class VPythonCube:
                     led = sphere(canvas=self.canvas,
                                  pos=vector(y - 2, z - 2, x - 2),
                                  radius=0.2,  # pingpong ball diameter is 40mm, distance between 'em 100mm
-                                 color=self.no_color)
+                                 color=self.no_color,
+                                 emissive=True)
                     # noinspection PyTypeChecker
                     self.pixels[pxid] = led
         self.canvas.bind("keydown", handle_mock_gpio)  # handle keypresses
@@ -34,7 +35,7 @@ class VPythonCube:
 
     def set_color(self, x, y, z, r, g, b):
         pxid = self.xyz2pxid(x, y, z)
-        self.pixels[pxid].color = vector(r / 200.0, g / 200.0, b / 200.0) * 0.75 + self.no_color
+        self.pixels[pxid].color = vector(r / 256.0, g / 256.0, b / 256.0) * 0.8 + self.no_color
 
     def show(self):
         pass
