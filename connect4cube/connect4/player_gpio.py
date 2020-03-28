@@ -4,8 +4,8 @@ from threading import Lock
 
 from gpiozero import Button
 
-from connect4cube import EMPTY
-from connect4cube.player import BasePlayer
+from connect4cube.connect4 import EMPTY
+from connect4cube.connect4.player import BasePlayer
 
 LOG = logging.getLogger(__name__)
 DEBOUNCE_TIME = 0.2

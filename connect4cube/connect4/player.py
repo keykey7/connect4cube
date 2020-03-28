@@ -2,8 +2,8 @@ import sys
 from random import Random
 from time import sleep
 
-from connect4cube.board import Board
-from connect4cube import EMPTY
+from connect4cube.connect4.board import Board
+from connect4cube.connect4 import EMPTY
 
 
 class Player:

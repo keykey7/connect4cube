@@ -1,10 +1,10 @@
 import logging
 import random
 
-from connect4cube import EMPTY
-from connect4cube.ai.board import CBoard
-from connect4cube.ai.think_ahead import negamax_full
-from connect4cube.player_demo import DemoPlayer
+from connect4cube.connect4 import EMPTY
+from connect4cube.connect4.ai.board import CBoard
+from connect4cube.connect4.ai.think_ahead import negamax_full
+from connect4cube.connect4.player_demo import DemoPlayer
 
 LOG = logging.getLogger(__name__)
 

@@ -2,10 +2,10 @@ from queue import Queue, Empty
 from random import Random
 from threading import Thread, Event, current_thread
 
-from connect4cube import RED, BLUE, EMPTY
-from connect4cube.cube import Cube
-from connect4cube.viewer import BoardViewer
-from connect4cube.util import is_a_raspberry
+from connect4cube.connect4 import RED, BLUE, EMPTY
+from connect4cube.connect4.viewer import BoardViewer
+from connect4cube.hardware.cube import Cube
+from connect4cube.hardware.util import is_a_raspberry
 
 if not is_a_raspberry():
     from time import sleep

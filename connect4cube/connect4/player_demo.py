@@ -2,8 +2,8 @@ import logging
 import random
 from time import sleep
 
-from connect4cube import EMPTY
-from connect4cube.player_gpio import GpioPlayer
+from connect4cube.connect4 import EMPTY
+from connect4cube.connect4.player_gpio import GpioPlayer
 
 
 LOG = logging.getLogger(__name__)

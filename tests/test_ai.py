@@ -1,8 +1,8 @@
 from copy import deepcopy
 
-from connect4cube.ai.board import CBoard
-from connect4cube.ai.check import is_win
-from connect4cube.ai.think_ahead import negamax_full
+from connect4cube.connect4.ai.board import CBoard
+from connect4cube.connect4.ai.check import is_win
+from connect4cube.connect4.ai.think_ahead import negamax_full
 
 
 def test_check_win():

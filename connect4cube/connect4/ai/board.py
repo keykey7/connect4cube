@@ -1,4 +1,4 @@
-from connect4cube import EMPTY
+from connect4cube.connect4 import EMPTY
 
 
 class CBoard:

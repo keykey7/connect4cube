@@ -1,9 +1,9 @@
 import logging
 
-from connect4cube import EMPTY
-from connect4cube.board import Board
-from connect4cube.player import Player
-from connect4cube.viewer import BoardViewer
+from connect4cube.connect4 import EMPTY
+from connect4cube.connect4.board import Board
+from connect4cube.connect4.player import Player
+from connect4cube.connect4.viewer import BoardViewer
 
 MAX_ROUND = 5 * 5 * 5 - 1
 LOG = logging.getLogger(__name__)

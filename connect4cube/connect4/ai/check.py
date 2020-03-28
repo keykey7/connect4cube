@@ -1,5 +1,5 @@
 # Generated file
-from connect4cube.ai.board import CBoard
+from connect4cube.connect4.ai.board import CBoard
 
 
 def is_win(board: CBoard, move_id: int) -> bool:

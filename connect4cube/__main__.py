@@ -1,11 +1,11 @@
 import logging
 import sys
 
-from connect4cube.ai.player_ai_demo import AiDemoPlayer
-from connect4cube.game import Game
-from connect4cube.player_demo import DemoInterrupted
-from connect4cube.util import is_a_raspberry
-from connect4cube.viewer_led import LedViewer, CYCLE, RAINBOW
+from connect4cube.connect4.ai.player_ai_demo import AiDemoPlayer
+from connect4cube.connect4.game import Game
+from connect4cube.connect4.player_demo import DemoInterrupted
+from connect4cube.connect4.viewer_led import LedViewer, CYCLE, RAINBOW
+from connect4cube.hardware.util import is_a_raspberry
 
 LOG = logging.getLogger(__name__)
 LOG.debug("sys.path=" + ":".join(sys.path))
@@ -17,7 +17,7 @@ if not is_a_raspberry():
     Device.pin_factory = MockFactory()
 
 # must come AFTER mocking gpio pins
-from connect4cube.player_gpio import GpioPlayer, PlayerTimeoutError, PlayerResetError  # noqa: E402
+from connect4cube.connect4.player_gpio import GpioPlayer, PlayerTimeoutError, PlayerResetError  # noqa: E402
 
 
 def human_player():

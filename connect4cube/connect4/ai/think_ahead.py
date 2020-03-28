@@ -1,5 +1,5 @@
-from connect4cube.ai.board import CBoard
-from connect4cube.ai.check import is_win
+from connect4cube.connect4.ai.board import CBoard
+from connect4cube.connect4.ai.check import is_win
 
 
 WIN_SCORE = 1000

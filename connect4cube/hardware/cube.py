@@ -1,9 +1,9 @@
-from connect4cube.util import is_a_raspberry
+from connect4cube.hardware.util import is_a_raspberry
 
 if is_a_raspberry():
-    from connect4cube.cube_led import LedCube
+    from connect4cube.hardware.cube_led import LedCube
 else:
-    from connect4cube.cube_vpython import VPythonCube
+    from connect4cube.hardware.cube_vpython import VPythonCube
 
 
 class Cube:

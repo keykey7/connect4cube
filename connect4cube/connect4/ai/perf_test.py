@@ -1,8 +1,8 @@
 import datetime
 
-from connect4cube.ai.board import CBoard
-from connect4cube.ai.perf_testdata_gen import hardname, easyname
-from connect4cube.ai.think_ahead import negamax_full, WIN_SCORE
+from connect4cube.connect4.ai.board import CBoard
+from connect4cube.connect4.ai.perf_testdata_gen import hardname, easyname
+from connect4cube.connect4.ai.think_ahead import negamax_full, WIN_SCORE
 
 
 def run_testset(filename):

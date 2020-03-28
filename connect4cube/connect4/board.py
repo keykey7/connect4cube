@@ -1,7 +1,7 @@
 import logging
 from itertools import product
 
-from connect4cube import RED, BLUE, EMPTY
+from connect4cube.connect4 import RED, BLUE, EMPTY
 
 POS_DIRECTIONS = list(product([-1, 0, 1], repeat=3))
 # throw away have of the list since the reverse directions are also checked.

@@ -1,9 +1,9 @@
 import os
 from random import Random
 
-from connect4cube.ai.board import CBoard
-from connect4cube.ai.check import is_win
-from connect4cube.ai.think_ahead import negamax_full, WIN_SCORE
+from connect4cube.connect4.ai.board import CBoard
+from connect4cube.connect4.ai.check import is_win
+from connect4cube.connect4.ai.think_ahead import negamax_full, WIN_SCORE
 
 ai_dir = os.path.dirname(os.path.realpath(__file__))
 easyname = os.path.join(ai_dir, "easy.csv")

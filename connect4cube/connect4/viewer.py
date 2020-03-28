@@ -1,7 +1,7 @@
 import logging
 
-from connect4cube import RED, BLUE, EMPTY
-from connect4cube.board import Board
+from connect4cube.connect4 import RED, BLUE, EMPTY
+from connect4cube.connect4.board import Board
 
 LOG = logging.getLogger(__name__)
 

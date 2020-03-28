@@ -1,6 +1,6 @@
 from time import sleep
 
-from connect4cube.cube import Cube
+from connect4cube.hardware.cube import Cube
 
 CHARS = {
         'a': ((0, 1, 0),
