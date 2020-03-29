@@ -31,15 +31,19 @@ sudo umount /run/media/$USER/boot
 * `sudo apt install unattended-upgrades sshfs python3-pip`
 * `sudo reboot`
 
-### connect4cube installation
+### connect4cube Installation
 PWM access requires [root permissions](https://github.com/jgarff/rpi_ws281x/issues/326).
+
+The rpi-ws281x package is only available on the pi, but pipenv does not support multiple
+package sets apart from --dev. So it has to be installed separately with the install-rpi script.
 ```bash
 sudo pip3 install pipenv
 sudo pipenv install
+sudo pipenv run install-rpi
 sudo pipenv shell
 ```
 
-### start connect4cube on start
+### Automatically Start connect4cube
 Use a systemd unit file to automatically start connect4cube and keep restarting it once it stops.
 The connect4cube project has to be located in the pi home directory: /home/pi/connect4cube
 ```bash

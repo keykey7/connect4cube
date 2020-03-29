@@ -17,3 +17,6 @@ gpiozero = "*"
 
 [requires]
 python_version = "3.7"
+
+[scripts]
+install-rpi = "pip install rpi-ws281x"
