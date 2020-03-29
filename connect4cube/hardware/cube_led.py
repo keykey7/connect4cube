@@ -1,4 +1,4 @@
-from adafruit_blinka.board.raspi_40pin import D18
+from adafruit_blinka.board.raspberrypi.raspi_40pin import D18
 from neopixel import NeoPixel, GRB
 
 
