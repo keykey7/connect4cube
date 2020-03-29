@@ -1,6 +1,6 @@
 import logging
 import random
-from time import sleep
+from queue import Empty
 
 from connect4cube.connect4 import EMPTY
 from connect4cube.connect4.player_gpio import GpioPlayer
@@ -9,15 +9,15 @@ from connect4cube.connect4.player_gpio import GpioPlayer
 LOG = logging.getLogger(__name__)
 
 
-class DemoInterrupted(RuntimeError):
-    pass
-
-
 class DemoPlayer(GpioPlayer):
     def sleep_or_die(self):
-        if self.reset_clicked:
+        try:
+            self.queue.get(timeout=0.8)
+            self.queue.task_done()
+            LOG.debug("GPIO button pressed, interrupting demo")
             raise DemoInterrupted()
-        sleep(0.8)
+        except Empty:
+            pass
 
     def get_valid_moves(self):
         valid_moves = []
@@ -50,6 +50,12 @@ class DemoPlayer(GpioPlayer):
         return random.choice(valid_moves)
 
     def do_play(self) -> tuple:
+        # consume all events which are still in the queue
+        try:
+            while self.queue.get(block=False):
+                self.queue.task_done()
+        except Empty:
+            pass
         x, y = self.best_move()
         sx, sy = self.selected
         while sx != x:
@@ -64,10 +70,6 @@ class DemoPlayer(GpioPlayer):
         self.sleep_or_die()
         return x, y
 
-    def axis_pressed(self, dx, dy):
-        self.button_pressed()
 
-    def button_pressed(self):
-        with self.lock:
-            LOG.debug("GPIO button pressed, interrupting demo")
-            self.reset_clicked = True
+class DemoInterrupted(RuntimeError):
+    pass
