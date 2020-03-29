@@ -186,7 +186,7 @@ CHARS = {
         }
 
 
-class TextWriter():
+class TextWriter:
     def __init__(self):
         self.cube = Cube()
 
@@ -206,13 +206,13 @@ class TextWriter():
             for z in range(5):
                 self.cube.set_color(4, y, z, 0, 0, 0)
 
-    def draw_string(self, str, delay):
-        for pos in range(-1, len(str)):
+    def draw_string(self, string, delay):
+        for pos in range(-1, len(string)):
             for i in range(4):
                 self.clear()
                 if pos >= 0:
-                    self.draw_character(str[pos], -i, (255, 255, 255))
-                if pos + 1 < len(str):
-                    self.draw_character(str[pos+1], 4 - i, (255, 255, 255))
+                    self.draw_character(string[pos], -i, (255, 255, 255))
+                if pos + 1 < len(string):
+                    self.draw_character(string[pos+1], 4 - i, (255, 255, 255))
                 self.cube.show()
                 sleep(delay)

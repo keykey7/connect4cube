@@ -58,8 +58,6 @@ def negamax_full(board: CBoard, depth=3):
     """
     :param board:
     :param depth: search depth
-    :param alpha: minimum score we assume to achieve
-    :param beta: maximum score we assume to achieve
     :return:
     """
     sorted_moves = board.get_valid_moves()
@@ -74,11 +72,11 @@ def negamax_full(board: CBoard, depth=3):
 
 
 if __name__ == "__main__":
-    board = CBoard()
-    board.move(1)
-    board.move(6)
-    board.move(2)
-    board.move(7)
-    print(board)
-    best_move = negamax_full(board)
+    test_board = CBoard()
+    test_board.move(1)
+    test_board.move(6)
+    test_board.move(2)
+    test_board.move(7)
+    print(test_board)
+    best_move = negamax_full(test_board)
     print(best_move)

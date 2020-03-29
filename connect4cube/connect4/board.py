@@ -57,7 +57,7 @@ class Board:
 
     def get_last(self):
         if len(self.history) == 0:
-            return (None, None)
+            return None, None
         else:
             return self.history[-1]
 

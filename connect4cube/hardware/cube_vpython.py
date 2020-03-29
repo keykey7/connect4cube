@@ -31,7 +31,8 @@ class VPythonCube:
         self.canvas.center = vector(0, 0, 0)
         self.canvas.bind("keydown", handle_mock_gpio)  # handle keypresses
 
-    def xyz2pxid(self, x, y, z) -> int:
+    @staticmethod
+    def xyz2pxid(x, y, z) -> int:
         return x + y * 5 + z * 25
 
     def set_color(self, x, y, z, r, g, b):
@@ -43,24 +44,24 @@ class VPythonCube:
 
 
 def handle_mock_gpio(event):
-    SHORT = 0
-    LONG = 1
+    pressed = 0
+    repeat = 1
     LOG.debug("keydown {}".format(event.key))
     pin = {
-        "up": (19, SHORT),
-        "down": (26, SHORT),
-        "left": (6, SHORT),
-        "right": (13, SHORT),
-        " ": (12, SHORT),
-        "\n": (12, SHORT),
-        "r": (16, SHORT),
-        "R": (16, LONG)
+        "up": (19, pressed),
+        "down": (26, pressed),
+        "left": (6, pressed),
+        "right": (13, pressed),
+        " ": (12, pressed),
+        "\n": (12, pressed),
+        "r": (16, pressed),
+        "R": (16, repeat)
     }.get(event.key, (0, 0))
     if pin != (0, 0):
         pin_dev = Device.pin_factory.pin(pin[0])
         pin_dev.drive_low()
-        if pin[1] == SHORT:
+        if pin[1] == pressed:
             sleep(0.1)
         else:
-            sleep(1)
+            sleep(1.5)
         pin_dev.drive_high()

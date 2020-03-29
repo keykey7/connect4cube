@@ -3,10 +3,10 @@ from connect4cube.connect4 import EMPTY
 
 class CBoard:
     def __init__(self):
-        self.cube = [EMPTY for i in range(125)]
+        self.cube = [EMPTY for _ in range(125)]
         self.valid_moves = [i for i in range(25)]
         self.round = 0
-        self.history = [-1 for i in range(125)]
+        self.history = [-1 for _ in range(125)]
         self.current_player = 0
         # stats
         self.nodes_counter = 0
@@ -30,7 +30,8 @@ class CBoard:
     def get_valid_moves(self):
         return list(filter(lambda x: x < 125, self.valid_moves))
 
-    def to_xyz(self, i):
+    @staticmethod
+    def to_xyz(i):
         x = i % 5
         y = (i // 5) % 5
         z = i // 25

@@ -28,6 +28,11 @@ class Or(Operand):
         return "(" + " or ".join([str(i) for i in self.args]) + ")"
 
 
+class OrSurround(Operand):
+    def __str__(self):
+        return " \\\n        or ".join([str(i) for i in self.args])
+
+
 X = 1
 Y = 5
 Z = 25
@@ -38,22 +43,27 @@ def generate():
     filename = os.path.join(ai_dir, "check.py")
     with open(filename, mode='w') as file:
         file.write("""# Generated file
-from connect4cube.ai.board import CBoard
+from connect4cube.connect4.ai.board import CBoard
 
 
 def is_win(board: CBoard, move_id: int) -> bool:
     return checkmap[move_id](board.cube, board.current_player)
+
 
 """)
         for i in range(125):
             file.write("def is_win{}(b, c):\n".format(i))
             file.write("    return {}\n".format(generate_move(i)))
             file.write("\n")
-        file.write("checkmap = [{}]\n".format(", ".join(["is_win{}".format(i) for i in range(125)])))
+            file.write("\n")
+        file.write("checkmap = [\n")
+        for i in range(25):
+            file.write("    " + ", ".join(["is_win{}".format(j+5*i) for j in range(5)]) + ",\n")
+        file.write("]\n")
 
 
 def generate_move(idx):
-    result = Or()
+    result = OrSurround()
     x, y, z = to_xyz(idx)
     for d in (
             X, Y, X+Y, Y-X,

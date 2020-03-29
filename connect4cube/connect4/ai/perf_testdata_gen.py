@@ -33,7 +33,7 @@ def generator():
             if is_win(board, move_id):
                 break
             board.move(move_id)
-            results = negamax_full(board, 4, -1, 1)
+            results = negamax_full(board, 4)
             file = hard if abs(results[0][1]) < WIN_SCORE else easy
             counter += 1
             line = ",".join([str(x) for x in board.history[0:board.round]])

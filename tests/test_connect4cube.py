@@ -51,11 +51,11 @@ def test_win_forward2():
 
 
 def test_random_game():
-    STDOUT = StdoutViewer()
-    game = Game(RandomPlayer(STDOUT, 0), RandomPlayer(STDOUT, 1), STDOUT)
+    stdout = StdoutViewer()
+    game = Game(RandomPlayer(stdout, 0), RandomPlayer(stdout, 1), stdout)
     assert game.play() == BLUE
-    STDOUT = StdoutViewer()
-    game = Game(RandomPlayer(STDOUT, 0), RandomPlayer(STDOUT, 4), STDOUT)
+    stdout = StdoutViewer()
+    game = Game(RandomPlayer(stdout, 0), RandomPlayer(stdout, 4), stdout)
     assert game.play() == RED
 
 

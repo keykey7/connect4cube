@@ -1,6 +1,6 @@
 from queue import Queue, Empty
 from random import Random
-from threading import Thread, Event, current_thread
+from threading import Thread, Event
 
 from connect4cube.connect4 import RED, BLUE, EMPTY
 from connect4cube.connect4.viewer import BoardViewer
@@ -50,9 +50,8 @@ class LedViewer(BoardViewer):
 
     def animation(self):
         animation_state = AnimationState(self.mode)
-        animation_list = []
-        animation_list.append(FieldColorsAnimation(animation_state, self.board.field))
-        while not current_thread().stopped() or animation_list[-1].is_blocking() or not self.queue.empty():
+        animation_list = [FieldColorsAnimation(animation_state, self.board.field)]
+        while not self.animation_thread.stopped() or animation_list[-1].is_blocking() or not self.queue.empty():
             if not animation_list[-1].is_blocking():
                 try:
                     event = self.queue.get_nowait()
@@ -60,13 +59,7 @@ class LedViewer(BoardViewer):
                     animation_list[-1].new_animation_available()
                     if event[0] == PLAY:
                         super().player_plays(*event[1:3])
-                        x = event[1]
-                        y = event[2]
-                        z = self.get_z(x, y)
-                        c = RED
-                        if self.board.next_color == RED:
-                            c = BLUE
-                        animation_list.append(PlayAnimation(animation_state, x, y, z, c))
+                        animation_list.append(PlayAnimation(animation_state))
                     elif event[0] == UNDO:
                         x = event[1]
                         y = event[2]
@@ -85,7 +78,7 @@ class LedViewer(BoardViewer):
                         if self.board.next_color == RED:
                             c = BLUE
                         animation_list.append(FinishAnimation(animation_state, event[1], c))
-                except (Empty):
+                except Empty:
                     pass
 
             animation_cube = None
@@ -126,7 +119,7 @@ class StoppableThread(Thread):
         return self.stop_event.is_set()
 
 
-class AnimationBase():
+class AnimationBase:
     def __init__(self, state):
         self.state = state
 
@@ -155,7 +148,7 @@ class SelectAnimation(AnimationBase):
         self.y = y
         self.z = z
         self.c = c
-        self.z_a = 5
+        self.z_a = 5.
         self.top = top
 
     def animate(self, cube) -> list:
@@ -164,23 +157,22 @@ class SelectAnimation(AnimationBase):
 
             for z in range(self.z, 5):
                 diff = abs(self.z_a - z)
-                dimmed_color = (0, 0, 0)
                 draw_color = player_color
                 min_dim = 0.1
                 # the one on the bottom is glowing white, except when there is no space left
                 if z == self.z and not self.top:
                     min_dim = 0.3
-                    dim = max(0, 1-diff)
+                    dim = max(0., 1-diff)
                     dimmed_color = tuple(map(lambda c, w: int(c * min_dim + (w - c * min_dim) * dim),
                                              draw_color, (255, 255, 255)))
                 else:
                     # always show a minimum of color on the selected line
-                    dim = max((1-diff), min_dim)
+                    dim = max((1.-diff), min_dim)
                     dimmed_color = tuple(map(lambda c: int(c * dim), draw_color))
                 cube[self.x][self.y][z] = dimmed_color
             self.z_a -= 0.1
             if self.z_a < self.z - 1:
-                self.z_a = 5
+                self.z_a = 5.
         return cube
 
     def is_done(self) -> bool:
@@ -195,7 +187,7 @@ class FinishAnimation(AnimationBase):
     BLINK_TIME = 50
     BLINK_COUNT = 6
 
-    class State():
+    class State:
         FLASH = 0
         BLINK = 1
 
@@ -209,9 +201,8 @@ class FinishAnimation(AnimationBase):
 
     def animate(self, cube) -> list:
         if not self.done:
-            color = None
             color = self.state.get_color(self.c)
-            if self.winning_coords == []:
+            if not self.winning_coords:
                 color = [255, 255, 255]
             if self.finish_state == self.State.FLASH:
                 color = tuple(map(lambda c: int(c - self.counter * (c / self.FLASH_TIME)), color))
@@ -220,15 +211,15 @@ class FinishAnimation(AnimationBase):
                         for z in range(5):
                             cube[x][y][z] = color
                 if self.counter >= self.FLASH_TIME:
-                    if self.winning_coords == []:
+                    if not self.winning_coords:
                         self.done = True
                     else:
                         self.counter = -1
                         self.finish_state = self.State.BLINK
             elif self.finish_state == self.State.BLINK:
                 color = tuple(map(lambda c: int(c - self.counter % self.BLINK_TIME * (c / self.BLINK_TIME)), color))
-                for c in self.winning_coords:
-                    cube[c[0]][c[1]][c[2]] = color
+                for coords in self.winning_coords:
+                    cube[coords[0]][coords[1]][coords[2]] = color
                 if self.counter >= self.BLINK_COUNT * self.BLINK_TIME - 1:
                     self.done = True
             self.counter += 1
@@ -242,7 +233,7 @@ class FinishAnimation(AnimationBase):
 
 
 class PlayAnimation(AnimationBase):
-    def __init__(self, state, x, y, z, c):
+    def __init__(self, state):
         super().__init__(state)
 
     def animate(self, cube) -> list:
@@ -309,7 +300,7 @@ class FieldColorsAnimation(AnimationBase):
         return False
 
 
-class AnimationState():
+class AnimationState:
     def __init__(self, mode):
         self.start = Random().randint(0, 255)
         self.variance = 15
@@ -323,7 +314,7 @@ class AnimationState():
         elif c == BLUE:
             return self.wheel((self.color + 128) % 256)
         else:
-            return (0, 0, 0)
+            return 0, 0, 0
 
     def update(self):
         self.color = (self.color + self.dir) % 256
@@ -333,7 +324,8 @@ class AnimationState():
         elif self.mode == RAINBOW:
             self.color = (self.color + 1) % 256
 
-    def wheel(self, pos):
+    @staticmethod
+    def wheel(pos):
         # Input a value 0 to 255 to get a color value.
         # The colours are a transition r - g - b - back to r.
         if pos < 0 or pos > 255:
@@ -352,4 +344,4 @@ class AnimationState():
             r = 0
             g = int(pos*3)
             b = int(255 - pos*3)
-        return (r, g, b)
+        return r, g, b
