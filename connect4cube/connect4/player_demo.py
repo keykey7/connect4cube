@@ -12,8 +12,8 @@ LOG = logging.getLogger(__name__)
 class DemoPlayer(GpioPlayer):
     def sleep_or_die(self):
         try:
-            self.queue.get(timeout=0.8)
-            self.queue.task_done()
+            self.button_events.event_queue.get(timeout=0.8)
+            self.button_events.event_queue.task_done()
             LOG.debug("GPIO button pressed, interrupting demo")
             raise DemoInterrupted()
         except Empty:
@@ -52,8 +52,8 @@ class DemoPlayer(GpioPlayer):
     def do_play(self) -> tuple:
         # consume all events which are still in the queue
         try:
-            while self.queue.get(block=False):
-                self.queue.task_done()
+            while self.button_events.event_queue.get(block=False):
+                self.button_events.event_queue.task_done()
         except Empty:
             pass
         x, y = self.best_move()
