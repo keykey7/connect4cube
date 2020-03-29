@@ -28,6 +28,8 @@ class VPythonCube:
                                  emissive=True)
                     # noinspection PyTypeChecker
                     self.pixels[pxid] = led
+        self.canvas.camera.rotate(angle=0.1, axis=vector(1, 1, 0), origin=self.canvas.center)
+        self.canvas.center = vector(0, 0, 0)
         self.canvas.bind("keydown", handle_mock_gpio)  # handle keypresses
 
     def xyz2pxid(self, x, y, z) -> int:
