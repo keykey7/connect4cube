@@ -4,7 +4,6 @@ from time import sleep
 from gpiozero import Device
 from vpython import sphere, vector, canvas, color
 
-
 LOG = logging.getLogger(__name__)
 
 

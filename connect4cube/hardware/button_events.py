@@ -1,8 +1,8 @@
 import logging
-from time import time
+from enum import Enum, auto
 from queue import Queue
 from threading import Lock
-from enum import Enum, auto
+from time import time
 
 from gpiozero import Button
 

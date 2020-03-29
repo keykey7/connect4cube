@@ -5,7 +5,6 @@ from queue import Empty
 from connect4cube.connect4 import EMPTY
 from connect4cube.connect4.player_gpio import GpioPlayer
 
-
 LOG = logging.getLogger(__name__)
 
 
