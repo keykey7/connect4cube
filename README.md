@@ -1,7 +1,7 @@
 # Connect Four Cube
 
 [![Build Status](https://travis-ci.com/keykey7/connect4cube.svg?branch=master)](https://travis-ci.com/keykey7/connect4cube)
-[![License](https://img.shields.io/badge/licence-GPLv3-blue)](LICENSE)
+[![License](https://img.shields.io/badge/licence-GPLv3-blue)](LICENCE)
 
 A 3D connect four game ("4 gewinnt").
 
