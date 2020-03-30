@@ -24,14 +24,19 @@ class Cube:
         def set_color(self, x, y, z, r, g, b):
             self.cube.set_color(x, y, z, r, g, b)
 
-        def draw(self, cube):
+        def draw(self, cube_buffer):
             for x in range(5):
                 for y in range(5):
                     for z in range(5):
-                        self.cube.set_color(x, y, z, *cube[x][y][z])
+                        self.cube.set_color(x, y, z, *cube_buffer[x][y][z])
 
         def show(self):
             self.cube.show()
+
+        @staticmethod
+        def get_empty_cube_buffer():
+            cube_buffer = [[[(0, 0, 0) for _ in range(5)] for _ in range(5)] for _ in range(5)]
+            return cube_buffer
 
     def __init__(self):
         if not Cube.instance:

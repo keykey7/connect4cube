@@ -81,15 +81,15 @@ class LedViewer(BoardViewer):
                 except Empty:
                     pass
 
-            animation_cube = None
+            cube_buffer = self.cube.get_empty_cube_buffer()
             for a in animation_list:
-                animation_cube = a.animate(animation_cube)
+                a.animate(cube_buffer)
 
             # remove completed animations from list
             animation_list[:] = [a for a in animation_list if not a.is_done()]
 
             # draw the completed cube
-            self.cube.draw(animation_cube)
+            self.cube.draw(cube_buffer)
             self.cube.show()
 
             animation_state.update()
@@ -123,9 +123,9 @@ class AnimationBase:
     def __init__(self, state):
         self.state = state
 
-    def animate(self, cube) -> list:
+    def animate(self, cube_buffer):
         # modify the cube with an animation
-        return cube
+        pass
 
     def is_done(self) -> bool:
         # animation is removed from the list once this is true
@@ -151,7 +151,7 @@ class SelectAnimation(AnimationBase):
         self.z_a = 5.
         self.top = top
 
-    def animate(self, cube) -> list:
+    def animate(self, cube_buffer):
         if not self.done:
             player_color = self.state.get_color(self.c)
 
@@ -169,11 +169,10 @@ class SelectAnimation(AnimationBase):
                     # always show a minimum of color on the selected line
                     dim = max((1.-diff), min_dim)
                     dimmed_color = tuple(map(lambda c: int(c * dim), draw_color))
-                cube[self.x][self.y][z] = dimmed_color
+                cube_buffer[self.x][self.y][z] = dimmed_color
             self.z_a -= 0.1
             if self.z_a < self.z - 1:
                 self.z_a = 5.
-        return cube
 
     def is_done(self) -> bool:
         return self.done
@@ -199,7 +198,7 @@ class FinishAnimation(AnimationBase):
         self.finish_state = self.State.FLASH
         self.counter = 0
 
-    def animate(self, cube) -> list:
+    def animate(self, cube_buffer):
         if not self.done:
             color = self.state.get_color(self.c)
             if not self.winning_coords:
@@ -209,7 +208,7 @@ class FinishAnimation(AnimationBase):
                 for x in range(5):
                     for y in range(5):
                         for z in range(5):
-                            cube[x][y][z] = color
+                            cube_buffer[x][y][z] = color
                 if self.counter >= self.FLASH_TIME:
                     if not self.winning_coords:
                         self.done = True
@@ -219,11 +218,10 @@ class FinishAnimation(AnimationBase):
             elif self.finish_state == self.State.BLINK:
                 color = tuple(map(lambda c: int(c - self.counter % self.BLINK_TIME * (c / self.BLINK_TIME)), color))
                 for coords in self.winning_coords:
-                    cube[coords[0]][coords[1]][coords[2]] = color
+                    cube_buffer[coords[0]][coords[1]][coords[2]] = color
                 if self.counter >= self.BLINK_COUNT * self.BLINK_TIME - 1:
                     self.done = True
             self.counter += 1
-        return cube
 
     def is_done(self) -> bool:
         return self.done
@@ -236,13 +234,10 @@ class PlayAnimation(AnimationBase):
     def __init__(self, state):
         super().__init__(state)
 
-    def animate(self, cube) -> list:
-        return cube
+    def animate(self, cube_buffer):
+        pass
 
     def is_done(self) -> bool:
-        return True
-
-    def is_blocking(self):
         return True
 
 
@@ -256,20 +251,18 @@ class UndoAnimation(AnimationBase):
         self.c = c
         self.z_a = z
 
-    def animate(self, cube) -> list:
+    def animate(self, cube_buffer):
         if not self.done:
             player_color = self.state.get_color(self.c)
-
             for z in range(self.z, 5):
                 diff = abs(self.z_a - z)
                 dimmed_color = (0, 0, 0)
                 if diff <= 1:
                     dimmed_color = tuple(map(lambda c: int(c * (1 - diff)), player_color))
-                cube[self.x][self.y][z] = dimmed_color
+                cube_buffer[self.x][self.y][z] = dimmed_color
             self.z_a += 0.1
             if self.z_a >= 5:
                 self.done = True
-        return cube
 
     def is_done(self) -> bool:
         return self.done
@@ -279,22 +272,17 @@ class UndoAnimation(AnimationBase):
 
 
 class FieldColorsAnimation(AnimationBase):
-    """
-    Always the first animation, the cube provided to animate() is completely overwritten.
-    """
     def __init__(self, state, field):
         super().__init__(state)
         self.field = field
 
-    def animate(self, cube) -> list:
-        cube = [[[(0, 0, 0) for _ in range(5)] for _ in range(5)] for _ in range(5)]
+    def animate(self, cube_buffer):
         for x in range(5):
             for y in range(5):
                 for z in range(5):
                     value = self.field(x, y, z)
                     color = self.state.get_color(value)
-                    cube[x][y][z] = color
-        return cube
+                    cube_buffer[x][y][z] = color
 
     def is_done(self) -> bool:
         return False
