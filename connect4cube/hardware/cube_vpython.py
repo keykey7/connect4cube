@@ -54,8 +54,12 @@ def handle_mock_gpio(event):
         "right": (13, pressed),
         " ": (12, pressed),
         "\n": (12, pressed),
-        "r": (16, pressed),
-        "R": (16, repeat)
+        "a": (12, pressed),
+        "A": (12, repeat),
+        "u": (16, pressed),  # undo
+        "r": (16, repeat),  # reset
+        "b": (16, pressed),
+        "B": (16, repeat)
     }.get(event.key, (0, 0))
     if pin != (0, 0):
         pin_dev = Device.pin_factory.pin(pin[0])
