@@ -1,6 +1,7 @@
 import logging
 
 from connect4cube.app import App
+from connect4cube.hardware.cube import Cube
 from connect4cube.connect4.ai.player_ai_demo import AiDemoPlayer
 from connect4cube.connect4.game import Game
 from connect4cube.connect4.player_demo import DemoInterrupted
@@ -25,7 +26,7 @@ class Connect4Demo(App):
             viewer.close()
 
     def get_preview(self):
-        preview = self.cube.get_empty_cube_buffer()
+        preview = Cube().get_empty_cube_buffer()
         preview[0, 0, 0] = 255, 0, 0
         return preview
 
@@ -53,7 +54,7 @@ class Connect4Human(App):
             viewer.close()
 
     def get_preview(self):
-        preview = self.cube.get_empty_cube_buffer()
+        preview = Cube().get_empty_cube_buffer()
         preview[0, 0, 0] = 0, 255, 0
         return preview
 

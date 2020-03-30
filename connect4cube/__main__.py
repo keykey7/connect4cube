@@ -8,10 +8,7 @@ LOG = logging.getLogger(__name__)
 LOG.debug("sys.path=" + ":".join(sys.path))
 
 if __name__ == "__main__":
-    apps = []
-    apps.append(Rainbow())
-    apps.append(Connect4Demo())
-    apps.append(Connect4Human())
+    apps = [Rainbow(), Connect4Demo(), Connect4Human()]
     while True:
         for app in apps:
             app.run()
