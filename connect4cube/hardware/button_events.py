@@ -3,8 +3,12 @@ from enum import Enum, auto
 from queue import Queue
 from threading import Lock
 from time import time
-
 from gpiozero import Button
+
+from connect4cube.hardware.util import is_a_raspberry
+if not is_a_raspberry():
+    from gpiozero.pins.mock import MockFactory
+    from gpiozero import Device
 
 LOG = logging.getLogger(__name__)
 DEBOUNCE_TIME = 0.1
@@ -21,6 +25,9 @@ class ButtonEvents:
             """
             all pin numbers in BMC, see https://pinout.xyz/
             """
+            if not is_a_raspberry():
+                Device.pin_factory = MockFactory()
+
             pin2fn = {
                 axis_up: (
                     lambda: self.button_pressed(self.Event.UP_PRESSED),
