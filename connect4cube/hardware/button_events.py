@@ -1,6 +1,6 @@
 import logging
 from enum import Enum, auto
-from queue import Queue
+from queue import Queue, Empty
 from threading import Lock
 from time import time
 from gpiozero import Button
@@ -92,6 +92,22 @@ class ButtonEvents:
         def button_repeated(self, event):
             LOG.debug("button event: {}".format(event))
             self.event_queue.put(event)
+
+        def get_event(self, timeout):
+            try:
+                event = self.event_queue.get(timeout=timeout)
+                self.event_queue.task_done()
+                return event
+            except Empty:
+                return None
+
+        def clear(self):
+            # consume all events which are still in the queue
+            try:
+                while self.event_queue.get(block=False):
+                    self.event_queue.task_done()
+            except Empty:
+                pass
 
         def close(self):
             # close any GPIO ports or creating a new instance will fail until the garbage collector runs

@@ -1,5 +1,4 @@
 import logging
-from queue import Empty
 
 from connect4cube.connect4 import EMPTY
 from connect4cube.connect4.player import BasePlayer
@@ -53,12 +52,7 @@ class GpioPlayer(BasePlayer):
         if self.selected == (-1, -1):
             self.selected = (2, 2)
         self.do_select(*self.selected)  # first show the last selected location
-        # consume all events which are still in the queue
-        try:
-            while self.button_events.event_queue.get(block=False):
-                self.button_events.event_queue.task_done()
-        except Empty:
-            pass
+        self.button_events.clear()
         self.return_position = (None, None)
         event_functions = {
             self.button_events.Event.UP_PRESSED: lambda: self.axis_pressed(-1, 0),
@@ -75,14 +69,14 @@ class GpioPlayer(BasePlayer):
             self.button_events.Event.B_REPEATED: self.reset_pressed,
         }
         while self.return_position is (None, None):
-            try:
-                event = self.button_events.event_queue.get(timeout=self.timeout)
-                self.button_events.event_queue.task_done()
+            event = self.button_events.get_event(self.timeout)
+            if event:
                 event_function = event_functions[event]
                 if event_function is not None:
                     event_functions[event]()
-            except Empty:
+            else:
                 raise PlayerTimeoutError()
+
             # increase timeout after first event
             self.timeout = 200
         return self.return_position

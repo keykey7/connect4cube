@@ -13,7 +13,7 @@ class DemoPlayer(GpioPlayer):
         try:
             self.button_events.event_queue.get(timeout=(random.random()+0.5))
             self.button_events.event_queue.task_done()
-            LOG.debug("GPIO button pressed, interrupting demo")
+            LOG.debug("button pressed, interrupting demo")
             raise DemoInterrupted()
         except Empty:
             pass
@@ -49,12 +49,7 @@ class DemoPlayer(GpioPlayer):
         return random.choice(valid_moves)
 
     def do_play(self) -> tuple:
-        # consume all events which are still in the queue
-        try:
-            while self.button_events.event_queue.get(block=False):
-                self.button_events.event_queue.task_done()
-        except Empty:
-            pass
+        self.button_events.clear()
         x, y = self.best_move()
         sx, sy = self.selected
         self.do_select(sx, sy)
