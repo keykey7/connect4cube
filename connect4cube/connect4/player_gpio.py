@@ -48,6 +48,11 @@ class GpioPlayer(BasePlayer):
         LOG.debug("reset button pressed")
         raise PlayerResetError()
 
+    @staticmethod
+    def exit_pressed():
+        LOG.debug("exit button pressed")
+        raise PlayerExitError()
+
     def do_play(self) -> tuple:
         if self.selected == (-1, -1):
             self.selected = (2, 2)
@@ -64,27 +69,28 @@ class GpioPlayer(BasePlayer):
             self.button_events.Event.RIGHT_PRESSED: lambda: self.axis_pressed(0, 1),
             self.button_events.Event.RIGHT_REPEATED: lambda: self.axis_pressed(0, 1),
             self.button_events.Event.A_PRESSED: self.drop_pressed,
-            self.button_events.Event.A_REPEATED: None,
+            self.button_events.Event.A_REPEATED: self.exit_pressed,
             self.button_events.Event.B_PRESSED: self.undo_pressed,
             self.button_events.Event.B_REPEATED: self.reset_pressed,
         }
         while self.return_position is (None, None):
-            event = self.button_events.get_event(self.timeout)
+            event = self.button_events.get_event(timeout=self.timeout)
             if event:
                 event_function = event_functions[event]
                 if event_function is not None:
                     event_functions[event]()
             else:
-                raise PlayerTimeoutError()
+                LOG.warning("player idle for too long")
+                raise PlayerExitError()
 
             # increase timeout after first event
             self.timeout = 200
         return self.return_position
 
 
-class PlayerTimeoutError(TimeoutError):
+class PlayerResetError(InterruptedError):
     pass
 
 
-class PlayerResetError(InterruptedError):
+class PlayerExitError(InterruptedError):
     pass

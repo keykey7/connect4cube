@@ -4,7 +4,7 @@ from threading import Thread, Event
 
 from connect4cube.connect4 import RED, BLUE, EMPTY
 from connect4cube.connect4.viewer import BoardViewer
-from connect4cube.hardware.cube import Cube
+from connect4cube.hardware.cube import Cube, get_empty_cube_buffer
 from connect4cube.hardware.util import is_a_raspberry
 from connect4cube.util.color import wheel
 
@@ -82,7 +82,7 @@ class LedViewer(BoardViewer):
                 except Empty:
                     pass
 
-            cube_buffer = self.cube.get_empty_cube_buffer()
+            cube_buffer = get_empty_cube_buffer()
             for a in animation_list:
                 a.animate(cube_buffer)
 

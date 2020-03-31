@@ -93,9 +93,9 @@ class ButtonEvents:
             LOG.debug("button event: {}".format(event))
             self.event_queue.put(event)
 
-        def get_event(self, timeout):
+        def get_event(self, block=True, timeout=None):
             try:
-                event = self.event_queue.get(timeout=timeout)
+                event = self.event_queue.get(block=block, timeout=timeout)
                 self.event_queue.task_done()
                 return event
             except Empty:

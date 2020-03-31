@@ -33,14 +33,14 @@ class Cube:
         def show(self):
             self.cube.show()
 
-        @staticmethod
-        def get_empty_cube_buffer():
-            cube_buffer = [[[(0, 0, 0) for _ in range(5)] for _ in range(5)] for _ in range(5)]
-            return cube_buffer
-
     def __init__(self):
         if not Cube.instance:
             Cube.instance = Cube.__Cube()
 
     def __getattr__(self, name):
         return getattr(self.instance, name)
+
+
+def get_empty_cube_buffer():
+    cube_buffer = [[[(0, 0, 0) for _ in range(5)] for _ in range(5)] for _ in range(5)]
+    return cube_buffer
