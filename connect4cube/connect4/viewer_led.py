@@ -6,6 +6,7 @@ from connect4cube.connect4 import RED, BLUE, EMPTY
 from connect4cube.connect4.viewer import BoardViewer
 from connect4cube.hardware.cube import Cube
 from connect4cube.hardware.util import is_a_raspberry
+from connect4cube.util.color import wheel
 
 if not is_a_raspberry():
     from time import sleep
@@ -298,9 +299,9 @@ class AnimationState:
 
     def get_color(self, c) -> tuple:
         if c == RED:
-            return self.wheel(self.color)
+            return wheel(self.color)
         elif c == BLUE:
-            return self.wheel((self.color + 128) % 256)
+            return wheel((self.color + 128) % 256)
         else:
             return 0, 0, 0
 
@@ -311,25 +312,3 @@ class AnimationState:
                 self.dir = -self.dir
         elif self.mode == RAINBOW:
             self.color = (self.color + 1) % 256
-
-    @staticmethod
-    def wheel(pos):
-        # Input a value 0 to 255 to get a color value.
-        # The colours are a transition r - g - b - back to r.
-        if pos < 0 or pos > 255:
-            r = g = b = 0
-        elif pos < 85:
-            r = int(pos*3)
-            g = int(255 - pos*3)
-            b = 0
-        elif pos < 170:
-            pos -= 85
-            r = int(255 - pos*3)
-            g = 0
-            b = int(pos*3)
-        else:
-            pos -= 170
-            r = 0
-            g = int(pos*3)
-            b = int(255 - pos*3)
-        return r, g, b
