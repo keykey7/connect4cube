@@ -13,10 +13,7 @@ LOG = logging.getLogger(__name__)
 # Choose more or less random values so the two rotations do not repeat regularly.
 THETA_D = 0.0121109
 PHI_D = 0.0093491
-RHO_D = 0.0
 WHEEL_OFFSET_D = 0.5
-RHO_UPPER_THRESHOLD = 1.5
-RHO_LOWER_THRESHOLD = 0.5
 
 
 class Rainbow(App):
@@ -26,41 +23,37 @@ class Rainbow(App):
         self.cube_buffer = get_empty_cube_buffer()
         self.theta = 0.0
         self.phi = 0.0
-        self.rho = 1.0
         self.wheel_offset = 0.0
         self.theta_d = 0.0
         self.phi_d = 0.0
-        self.rho_d = 0.0
         self.wheel_offset_d = 0.0
 
     def run(self):
-        rho_dir = 1
         try:
             while True:
                 self.handle_events()
-                v = [self.rho*sin(self.theta)*cos(self.phi),
-                     self.rho*sin(self.theta)*sin(self.phi),
-                     self.rho*cos(self.theta)]
+                v = [sin(self.theta)*cos(self.phi),
+                     sin(self.theta)*sin(self.phi),
+                     cos(self.theta)]
                 rainbow(self.cube_buffer, v, self.wheel_offset)
                 self.cube.draw(self.cube_buffer)
                 self.cube.show()
                 # Rotate vector
                 self.theta += self.theta_d
                 self.phi += self.phi_d
-                # Scale vector
-                # self.rho += self.rho_d * rho_dir
-                # Switch direction of rho_d, to cycle between these two thresholds.
-                if self.rho < RHO_LOWER_THRESHOLD or self.rho > RHO_UPPER_THRESHOLD:
-                    rho_dir = -rho_dir
                 # Cycle through all colors so the rainbow not only rotates, but also
                 # moves through the cube.
                 self.wheel_offset += self.wheel_offset_d
+                self.wheel_offset %= 256
                 if not is_a_raspberry():
                     sleep(0.02)
         except RainbowInterrupted:
             return
 
     def handle_events(self):
+        """
+        adjust the rotation settings of the rainbow
+        """
         event = self.button_events.get_event(block=False)
         if event:
             if event == EventEnum.UP_PRESSED or event == EventEnum.UP_REPEATED:
@@ -76,11 +69,9 @@ class Rainbow(App):
             elif event == EventEnum.A_REPEATED:
                 self.theta = 0.0
                 self.phi = 0.0
-                self.rho = 1.0
                 self.wheel_offset = 0.0
                 self.theta_d = 0.0
                 self.phi_d = 0.0
-                self.rho_d = 0.0
                 self.wheel_offset_d = 0.0
             elif event == EventEnum.B_PRESSED:
                 self.wheel_offset_d += 0.5
@@ -102,10 +93,16 @@ class RainbowInterrupted(RuntimeError):
 
 
 def rainbow(cube_buffer, v, wheel_offset):
+    """
+    draw a rainbow across the cube, oriented according to the given vector
+    :param cube_buffer: cube buffer to modify
+    :param v: vector for rainbow orientation and scaling (unit vector results in one rainbow across the cube)
+    :param wheel_offset: color wheel offset
+    """
     for x in range(5):
         for y in range(5):
             for z in range(5):
-                projection = ((x-2)*v[0] + (y-2)*v[1] + (z-2)*v[2])
+                dot_product = ((x-2)*v[0] + (y-2)*v[1] + (z-2)*v[2])
                 # 37 is the number to have the full rainbow range from [-2, -2, -2] to [2, 2, 2]
                 # if v is a unit vector.
-                cube_buffer[x][y][z] = wheel(int(projection * 37 + wheel_offset))
+                cube_buffer[x][y][z] = wheel(int(dot_product * 37 + wheel_offset))
