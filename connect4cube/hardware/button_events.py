@@ -30,28 +30,28 @@ class ButtonEvents:
 
             pin2fn = {
                 axis_up: (
-                    lambda: self.button_pressed(self.Event.UP_PRESSED),
-                    lambda: self.button_repeated(self.Event.UP_REPEATED)
+                    lambda: self.button_pressed(EventEnum.UP_PRESSED),
+                    lambda: self.button_repeated(EventEnum.UP_REPEATED)
                 ),
                 axis_down: (
-                    lambda: self.button_pressed(self.Event.DOWN_PRESSED),
-                    lambda: self.button_repeated(self.Event.DOWN_REPEATED)
+                    lambda: self.button_pressed(EventEnum.DOWN_PRESSED),
+                    lambda: self.button_repeated(EventEnum.DOWN_REPEATED)
                 ),
                 axis_left: (
-                    lambda: self.button_pressed(self.Event.LEFT_PRESSED),
-                    lambda: self.button_repeated(self.Event.LEFT_REPEATED)
+                    lambda: self.button_pressed(EventEnum.LEFT_PRESSED),
+                    lambda: self.button_repeated(EventEnum.LEFT_REPEATED)
                 ),
                 axis_right: (
-                    lambda: self.button_pressed(self.Event.RIGHT_PRESSED),
-                    lambda: self.button_repeated(self.Event.RIGHT_REPEATED)
+                    lambda: self.button_pressed(EventEnum.RIGHT_PRESSED),
+                    lambda: self.button_repeated(EventEnum.RIGHT_REPEATED)
                 ),
                 button_a: (
-                    lambda: self.button_pressed(self.Event.A_PRESSED),
-                    lambda: self.button_repeated(self.Event.A_REPEATED)
+                    lambda: self.button_pressed(EventEnum.A_PRESSED),
+                    lambda: self.button_repeated(EventEnum.A_REPEATED)
                 ),
                 button_b: (
-                    lambda: self.button_pressed(self.Event.B_PRESSED),
-                    lambda: self.button_repeated(self.Event.B_REPEATED)
+                    lambda: self.button_pressed(EventEnum.B_PRESSED),
+                    lambda: self.button_repeated(EventEnum.B_REPEATED)
                 ),
             }
             self.buttons = []
@@ -68,12 +68,12 @@ class ButtonEvents:
             self.last_a_time = self.LastEventTime()
             self.last_b_time = self.LastEventTime()
             self.last_event_times = {
-                self.Event.UP_PRESSED: self.last_up_down_time,
-                self.Event.DOWN_PRESSED: self.last_up_down_time,
-                self.Event.LEFT_PRESSED: self.last_left_right_time,
-                self.Event.RIGHT_PRESSED: self.last_left_right_time,
-                self.Event.A_PRESSED: self.last_a_time,
-                self.Event.B_PRESSED: self.last_b_time,
+                EventEnum.UP_PRESSED: self.last_up_down_time,
+                EventEnum.DOWN_PRESSED: self.last_up_down_time,
+                EventEnum.LEFT_PRESSED: self.last_left_right_time,
+                EventEnum.RIGHT_PRESSED: self.last_left_right_time,
+                EventEnum.A_PRESSED: self.last_a_time,
+                EventEnum.B_PRESSED: self.last_b_time,
 
             }
 
@@ -114,23 +114,6 @@ class ButtonEvents:
             for button in self.buttons:
                 button.close()
 
-        class Event(Enum):
-            """
-            Button event identifiers to send via a queue to consumers.
-            """
-            UP_PRESSED = auto()
-            DOWN_PRESSED = auto()
-            LEFT_PRESSED = auto()
-            RIGHT_PRESSED = auto()
-            A_PRESSED = auto()
-            B_PRESSED = auto()
-            UP_REPEATED = auto()
-            DOWN_REPEATED = auto()
-            LEFT_REPEATED = auto()
-            RIGHT_REPEATED = auto()
-            A_REPEATED = auto()
-            B_REPEATED = auto()
-
         class LastEventTime:
             """
             Class to store the last event time.
@@ -145,3 +128,21 @@ class ButtonEvents:
 
     def __getattr__(self, name):
         return getattr(self.instance, name)
+
+
+class EventEnum(Enum):
+    """
+    Button event identifiers to send via a queue to consumers.
+    """
+    UP_PRESSED = auto()
+    DOWN_PRESSED = auto()
+    LEFT_PRESSED = auto()
+    RIGHT_PRESSED = auto()
+    A_PRESSED = auto()
+    B_PRESSED = auto()
+    UP_REPEATED = auto()
+    DOWN_REPEATED = auto()
+    LEFT_REPEATED = auto()
+    RIGHT_REPEATED = auto()
+    A_REPEATED = auto()
+    B_REPEATED = auto()

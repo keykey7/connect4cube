@@ -2,7 +2,7 @@ import logging
 
 from connect4cube.connect4 import EMPTY
 from connect4cube.connect4.player import BasePlayer
-from connect4cube.hardware.button_events import ButtonEvents
+from connect4cube.hardware.button_events import ButtonEvents, EventEnum
 
 LOG = logging.getLogger(__name__)
 
@@ -60,18 +60,18 @@ class GpioPlayer(BasePlayer):
         self.button_events.clear()
         self.return_position = (None, None)
         event_functions = {
-            self.button_events.Event.UP_PRESSED: lambda: self.axis_pressed(-1, 0),
-            self.button_events.Event.UP_REPEATED: lambda: self.axis_pressed(-1, 0),
-            self.button_events.Event.DOWN_PRESSED: lambda: self.axis_pressed(1, 0),
-            self.button_events.Event.DOWN_REPEATED: lambda: self.axis_pressed(1, 0),
-            self.button_events.Event.LEFT_PRESSED: lambda: self.axis_pressed(0, -1),
-            self.button_events.Event.LEFT_REPEATED: lambda: self.axis_pressed(0, -1),
-            self.button_events.Event.RIGHT_PRESSED: lambda: self.axis_pressed(0, 1),
-            self.button_events.Event.RIGHT_REPEATED: lambda: self.axis_pressed(0, 1),
-            self.button_events.Event.A_PRESSED: self.drop_pressed,
-            self.button_events.Event.A_REPEATED: self.exit_pressed,
-            self.button_events.Event.B_PRESSED: self.undo_pressed,
-            self.button_events.Event.B_REPEATED: self.reset_pressed,
+            EventEnum.UP_PRESSED: lambda: self.axis_pressed(-1, 0),
+            EventEnum.UP_REPEATED: lambda: self.axis_pressed(-1, 0),
+            EventEnum.DOWN_PRESSED: lambda: self.axis_pressed(1, 0),
+            EventEnum.DOWN_REPEATED: lambda: self.axis_pressed(1, 0),
+            EventEnum.LEFT_PRESSED: lambda: self.axis_pressed(0, -1),
+            EventEnum.LEFT_REPEATED: lambda: self.axis_pressed(0, -1),
+            EventEnum.RIGHT_PRESSED: lambda: self.axis_pressed(0, 1),
+            EventEnum.RIGHT_REPEATED: lambda: self.axis_pressed(0, 1),
+            EventEnum.A_PRESSED: self.drop_pressed,
+            EventEnum.A_REPEATED: self.exit_pressed,
+            EventEnum.B_PRESSED: self.undo_pressed,
+            EventEnum.B_REPEATED: self.reset_pressed,
         }
         while self.return_position is (None, None):
             event = self.button_events.get_event(timeout=self.timeout)

@@ -4,7 +4,7 @@ from connect4cube.hardware.cube import Cube
 from connect4cube.connect4.connect4 import Connect4Demo, Connect4Human
 from connect4cube.rainbow.rainbow import Rainbow
 from connect4cube.random.random import Random
-from connect4cube.hardware.button_events import ButtonEvents
+from connect4cube.hardware.button_events import ButtonEvents, EventEnum
 
 LOG = logging.getLogger(__name__)
 
@@ -19,13 +19,13 @@ class Selector:
 
     def run(self):
         event = self.button_events.get_event()
-        if event == self.button_events.Event.UP_PRESSED or event == self.button_events.Event.LEFT_PRESSED:
+        if event == EventEnum.UP_PRESSED or event == EventEnum.LEFT_PRESSED:
             self.selected = (self.selected - 1) % len(self.apps)
             self.show_preview()
-        elif event == self.button_events.Event.DOWN_PRESSED or event == self.button_events.Event.RIGHT_PRESSED:
+        elif event == EventEnum.DOWN_PRESSED or event == EventEnum.RIGHT_PRESSED:
             self.selected = (self.selected + 1) % len(self.apps)
             self.show_preview()
-        elif event == self.button_events.Event.A_PRESSED:
+        elif event == EventEnum.A_PRESSED:
             self.apps[self.selected].run()
             self.show_preview()
 
