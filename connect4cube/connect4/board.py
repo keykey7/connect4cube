@@ -91,8 +91,7 @@ class Board:
                     return self.four_from(x, y, z, d[0], d[1], d[2])
         return None
 
-    @staticmethod
-    def four_from(x, y, z, dx, dy, dz):
+    def four_from(self, x, y, z, dx, dy, dz):
         result = []
         for i in range(4):
             result.append([x + dx * i, y + dy * i, z + dz * i])

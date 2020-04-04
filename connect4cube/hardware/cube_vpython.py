@@ -31,8 +31,7 @@ class VPythonCube:
         self.canvas.center = vector(0, 0, 0)
         self.canvas.bind("keydown", handle_mock_gpio)  # handle keypresses
 
-    @staticmethod
-    def xyz2pxid(x, y, z) -> int:
+    def xyz2pxid(self, x, y, z) -> int:
         return x + y * 5 + z * 25
 
     def set_color(self, x, y, z, r, g, b):

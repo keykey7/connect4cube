@@ -15,6 +15,9 @@ LOG = logging.getLogger(__name__)
 
 
 class Random(App):
+    """
+    fill the cube with random stuff and change it slowly
+    """
     def __init__(self):
         self.button_events = ButtonEvents()
         self.cube = Cube()
@@ -47,8 +50,7 @@ class Random(App):
                     color = wheel(int(start[x][y][z] + (stop[x][y][z] - start[x][y][z]) * step) % 256)
                     self.cube_buffer[x][y][z] = color
 
-    @staticmethod
-    def get_random_wheel():
+    def get_random_wheel(self):
         random_wheel = [[[randint(0, 255) for _ in range(5)] for _ in range(5)] for _ in range(5)]
         return random_wheel
 

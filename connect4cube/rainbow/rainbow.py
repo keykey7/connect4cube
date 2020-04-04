@@ -35,7 +35,7 @@ class Rainbow(App):
                 v = [sin(self.theta)*cos(self.phi),
                      sin(self.theta)*sin(self.phi),
                      cos(self.theta)]
-                rainbow(self.cube_buffer, v, self.wheel_offset)
+                self.rainbow(self.cube_buffer, v, self.wheel_offset)
                 self.cube.draw(self.cube_buffer)
                 self.cube.show()
                 # Rotate vector
@@ -79,9 +79,24 @@ class Rainbow(App):
                 LOG.debug("button pressed, interrupting rainbow")
                 raise RainbowInterrupted()
 
+    def rainbow(self, cube_buffer, v, wheel_offset):
+        """
+        draw a rainbow across the cube, oriented according to the given vector
+        :param cube_buffer: cube buffer to modify
+        :param v: vector for rainbow orientation and scaling (unit vector results in one rainbow across the cube)
+        :param wheel_offset: color wheel offset
+        """
+        for x in range(5):
+            for y in range(5):
+                for z in range(5):
+                    dot_product = ((x-2)*v[0] + (y-2)*v[1] + (z-2)*v[2])
+                    # 37 is the number to have the full rainbow range from [-2, -2, -2] to [2, 2, 2]
+                    # if v is a unit vector.
+                    cube_buffer[x][y][z] = wheel(int(dot_product * 37 + wheel_offset))
+
     def get_preview(self):
         preview = get_empty_cube_buffer()
-        rainbow(preview, [0.5, 0.5, 0.5], 0)
+        self.rainbow(preview, [0.5, 0.5, 0.5], 0)
         return preview
 
     def get_description(self) -> str:
@@ -90,19 +105,3 @@ class Rainbow(App):
 
 class RainbowInterrupted(RuntimeError):
     pass
-
-
-def rainbow(cube_buffer, v, wheel_offset):
-    """
-    draw a rainbow across the cube, oriented according to the given vector
-    :param cube_buffer: cube buffer to modify
-    :param v: vector for rainbow orientation and scaling (unit vector results in one rainbow across the cube)
-    :param wheel_offset: color wheel offset
-    """
-    for x in range(5):
-        for y in range(5):
-            for z in range(5):
-                dot_product = ((x-2)*v[0] + (y-2)*v[1] + (z-2)*v[2])
-                # 37 is the number to have the full rainbow range from [-2, -2, -2] to [2, 2, 2]
-                # if v is a unit vector.
-                cube_buffer[x][y][z] = wheel(int(dot_product * 37 + wheel_offset))

@@ -10,6 +10,9 @@ LOG = logging.getLogger(__name__)
 
 
 class Selector:
+    """
+    App selector to show previews and run apps
+    """
     def __init__(self):
         self.cube = Cube()
         self.button_events = ButtonEvents()

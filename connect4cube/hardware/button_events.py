@@ -102,7 +102,9 @@ class ButtonEvents:
                 return None
 
         def clear(self):
-            # consume all events which are still in the queue
+            """
+            consume all events which are still in the queue
+            """
             try:
                 while self.event_queue.get(block=False):
                     self.event_queue.task_done()
@@ -110,7 +112,9 @@ class ButtonEvents:
                 pass
 
         def close(self):
-            # close any GPIO ports or creating a new instance will fail until the garbage collector runs
+            """
+            close any GPIO ports or creating a new instance will fail until the garbage collector runs
+            """
             for button in self.buttons:
                 button.close()
 

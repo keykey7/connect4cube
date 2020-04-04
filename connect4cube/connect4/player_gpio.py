@@ -43,13 +43,11 @@ class GpioPlayer(BasePlayer):
         LOG.debug("undo button pressed")
         self.return_position = (-1, -1)
 
-    @staticmethod
-    def reset_pressed():
+    def reset_pressed(self):
         LOG.debug("reset button pressed")
         raise PlayerResetError()
 
-    @staticmethod
-    def exit_pressed():
+    def exit_pressed(self):
         LOG.debug("exit button pressed")
         raise PlayerExitError()
 

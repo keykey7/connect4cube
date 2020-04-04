@@ -18,8 +18,7 @@ class LedCube:
     def show(self):
         self.pixels.show()
 
-    @staticmethod
-    def xyz2pxid(x, y, z) -> int:
+    def xyz2pxid(self, x, y, z) -> int:
         transform = {
                 (0, 0, 0):  20, (1, 0, 0):  19, (2, 0, 0):  10, (3, 0, 0):   9, (4, 0, 0):   0,
                 (0, 1, 0):  29, (1, 1, 0):  30, (2, 1, 0):  39, (3, 1, 0):  40, (4, 1, 0):  49,

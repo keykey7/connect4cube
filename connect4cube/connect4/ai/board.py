@@ -30,8 +30,7 @@ class CBoard:
     def get_valid_moves(self):
         return list(filter(lambda x: x < 125, self.valid_moves))
 
-    @staticmethod
-    def to_xyz(i):
+    def to_xyz(self, i):
         x = i % 5
         y = (i // 5) % 5
         z = i // 25
