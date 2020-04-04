@@ -27,7 +27,7 @@ class Rainbow(App):
                 rainbow(self.cube_buffer, wheel_pos)
                 self.cube.draw(self.cube_buffer)
                 self.cube.show()
-                wheel_pos = (wheel_pos + 1) % 255
+                wheel_pos = (wheel_pos + 1) % 256
                 if not is_a_raspberry():
                     sleep(0.02)
         except RainbowInterrupted:
@@ -49,6 +49,6 @@ class RainbowInterrupted(RuntimeError):
 def rainbow(cube_buffer, wheel_pos):
     for y in range(5):
         for x in range(5):
-            color = wheel((y * 50 + x * 10 + wheel_pos) % 255)
+            color = wheel((y * 50 + x * 10 + wheel_pos) % 256)
             for z in range(5):
                 cube_buffer[x][y][z] = color
