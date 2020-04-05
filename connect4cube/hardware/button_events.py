@@ -11,7 +11,8 @@ if not is_a_raspberry():
     from gpiozero import Device
 
 LOG = logging.getLogger(__name__)
-DEBOUNCE_TIME = 0.1
+DEBOUNCE_TIME = 0.01
+DEBOUNCE_TIME_REVERSE_DIR = 0.1
 
 
 class ButtonEvents:
@@ -30,68 +31,112 @@ class ButtonEvents:
 
             pin2fn = {
                 axis_up: (
-                    lambda: self.button_pressed(EventEnum.UP_PRESSED),
-                    lambda: self.button_repeated(EventEnum.UP_REPEATED)
+                    lambda: self.button_pressed_dir(EventEnum.UP_PRESSED),
+                    lambda: self.button_repeated(EventEnum.UP_REPEATED),
+                    lambda: self.button_released(EventEnum.UP_PRESSED)
                 ),
                 axis_down: (
-                    lambda: self.button_pressed(EventEnum.DOWN_PRESSED),
-                    lambda: self.button_repeated(EventEnum.DOWN_REPEATED)
+                    lambda: self.button_pressed_dir(EventEnum.DOWN_PRESSED),
+                    lambda: self.button_repeated(EventEnum.DOWN_REPEATED),
+                    lambda: self.button_released(EventEnum.DOWN_PRESSED)
                 ),
                 axis_left: (
-                    lambda: self.button_pressed(EventEnum.LEFT_PRESSED),
-                    lambda: self.button_repeated(EventEnum.LEFT_REPEATED)
+                    lambda: self.button_pressed_dir(EventEnum.LEFT_PRESSED),
+                    lambda: self.button_repeated(EventEnum.LEFT_REPEATED),
+                    lambda: self.button_released(EventEnum.LEFT_PRESSED)
                 ),
                 axis_right: (
-                    lambda: self.button_pressed(EventEnum.RIGHT_PRESSED),
-                    lambda: self.button_repeated(EventEnum.RIGHT_REPEATED)
+                    lambda: self.button_pressed_dir(EventEnum.RIGHT_PRESSED),
+                    lambda: self.button_repeated(EventEnum.RIGHT_REPEATED),
+                    lambda: self.button_released(EventEnum.RIGHT_PRESSED)
                 ),
                 button_a: (
                     lambda: self.button_pressed(EventEnum.A_PRESSED),
-                    lambda: self.button_repeated(EventEnum.A_REPEATED)
+                    lambda: self.button_repeated(EventEnum.A_REPEATED),
+                    lambda: self.button_released(EventEnum.A_PRESSED)
                 ),
                 button_b: (
                     lambda: self.button_pressed(EventEnum.B_PRESSED),
-                    lambda: self.button_repeated(EventEnum.B_REPEATED)
+                    lambda: self.button_repeated(EventEnum.B_REPEATED),
+                    lambda: self.button_released(EventEnum.B_PRESSED)
                 ),
             }
             self.buttons = []
             for pin, fns in pin2fn.items():
+                # Debouncing function of Button (argument bounce_time) is broken and is not usable.
                 button = Button(pin, hold_repeat=True, hold_time=1)
                 button.when_pressed = fns[0]
                 button.when_held = fns[1]
+                button.when_released = fns[2]
                 self.buttons.append(button)
 
-            # up/down and left/right are combined for debouncing
-            # if the joystick is released it tends to jump back activate the reversed direction
-            self.last_up_down_time = self.LastEventTime()
-            self.last_left_right_time = self.LastEventTime()
+            self.last_up_time = self.LastEventTime()
+            self.last_down_time = self.LastEventTime()
+            self.last_left_time = self.LastEventTime()
+            self.last_right_time = self.LastEventTime()
             self.last_a_time = self.LastEventTime()
             self.last_b_time = self.LastEventTime()
             self.last_event_times = {
-                EventEnum.UP_PRESSED: self.last_up_down_time,
-                EventEnum.DOWN_PRESSED: self.last_up_down_time,
-                EventEnum.LEFT_PRESSED: self.last_left_right_time,
-                EventEnum.RIGHT_PRESSED: self.last_left_right_time,
+                EventEnum.UP_PRESSED: self.last_up_time,
+                EventEnum.DOWN_PRESSED: self.last_down_time,
+                EventEnum.LEFT_PRESSED: self.last_left_time,
+                EventEnum.RIGHT_PRESSED: self.last_right_time,
                 EventEnum.A_PRESSED: self.last_a_time,
-                EventEnum.B_PRESSED: self.last_b_time,
-
+                EventEnum.B_PRESSED: self.last_b_time
+            }
+            # Dictionary to get the event times of the reverse direction.
+            # Used for additional debouncing of joystick.
+            self.last_reverse_dir_event_times = {
+                EventEnum.UP_PRESSED: self.last_down_time,
+                EventEnum.DOWN_PRESSED: self.last_up_time,
+                EventEnum.LEFT_PRESSED: self.last_right_time,
+                EventEnum.RIGHT_PRESSED: self.last_left_time
             }
 
             self.lock = Lock()
             self.event_queue = Queue()
 
+        def button_pressed_dir(self, event):
+            """
+            If the joystick is released it tends to jump back and activate the reversed direction.
+            Suppress this reverse activation in addition to the normal debouncing.
+            """
+            LOG.debug("button event: {}".format(event))
+            with self.lock:
+                diff = time() - self.last_event_times[event].last_event_time
+                if diff < DEBOUNCE_TIME:
+                    LOG.debug("debounce: ignoring input")
+                    return
+                reverse_dir_diff = time() - self.last_reverse_dir_event_times[event].last_event_time
+                if reverse_dir_diff < DEBOUNCE_TIME_REVERSE_DIR:
+                    LOG.debug("debounce reverse dir: ignoring input")
+                    return
+                self.last_event_times[event].last_event_time = time()
+            self.event_queue.put(event)
+
         def button_pressed(self, event):
+            """
+            Debounce the button by checking the last event time of this button.
+            """
             LOG.debug("button event: {}".format(event))
             with self.lock:
                 if time() - self.last_event_times[event].last_event_time < DEBOUNCE_TIME:
                     LOG.debug("debounce: ignoring input")
                     return
-            self.last_event_times[event].last_event_time = time()
+                self.last_event_times[event].last_event_time = time()
             self.event_queue.put(event)
 
         def button_repeated(self, event):
             LOG.debug("button event: {}".format(event))
             self.event_queue.put(event)
+
+        def button_released(self, event):
+            """
+            Reset debounce time on release.
+            """
+            LOG.debug("button released: {}".format(event))
+            with self.lock:
+                self.last_event_times[event].last_event_time = time()
 
         def get_event(self, block=True, timeout=None):
             try:
@@ -121,7 +166,7 @@ class ButtonEvents:
         class LastEventTime:
             """
             Class to store the last event time.
-            Separate class so it can be used in a dictionary with multiple keys.
+            Separate class so it can be used from multiple dictionaries.
             """
             def __init__(self, last_event_time=0):
                 self.last_event_time = last_event_time
