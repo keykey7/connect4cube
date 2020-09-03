@@ -15,7 +15,7 @@ class VPythonCube:
 
     def __init__(self):
         self.canvas = canvas(width=1900, height=900)
-        self.pixels = [None] * 125
+        self.pixels = [sphere] * 125
         for x in range(5):
             for y in range(5):
                 for z in range(5):

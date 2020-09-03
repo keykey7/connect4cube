@@ -71,7 +71,7 @@ class GpioPlayer(BasePlayer):
             EventEnum.B_PRESSED: self.undo_pressed,
             EventEnum.B_REPEATED: self.reset_pressed,
         }
-        while self.return_position is (None, None):
+        while self.return_position == (None, None):
             event = self.button_events.get_event(timeout=self.timeout)
             if event:
                 event_function = event_functions[event]
