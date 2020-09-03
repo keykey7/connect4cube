@@ -29,6 +29,8 @@ class Selector:
             self.selected = (self.selected + 1) % len(self.apps)
             self.show_preview()
         elif event == EventEnum.A_PRESSED:
+            # create new instance
+            self.apps[self.selected] = type(self.apps[self.selected])()
             self.apps[self.selected].run()
             self.show_preview()
 
