@@ -67,17 +67,17 @@ class Rainbow(App):
             elif event == EventEnum.A_PRESSED:
                 self.wheel_offset_d -= WHEEL_OFFSET_D
             elif event == EventEnum.A_REPEATED:
+                LOG.debug("interrupting rainbow")
+                raise RainbowInterrupted()
+            elif event == EventEnum.B_PRESSED:
+                self.wheel_offset_d += 0.5
+            elif event == EventEnum.B_REPEATED:
                 self.theta = 0.0
                 self.phi = 0.0
                 self.wheel_offset = 0.0
                 self.theta_d = 0.0
                 self.phi_d = 0.0
                 self.wheel_offset_d = 0.0
-            elif event == EventEnum.B_PRESSED:
-                self.wheel_offset_d += 0.5
-            elif event == EventEnum.B_REPEATED:
-                LOG.debug("button pressed, interrupting rainbow")
-                raise RainbowInterrupted()
 
     def rainbow(self, cube_buffer, v, wheel_offset):
         """
