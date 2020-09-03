@@ -1,9 +1,13 @@
+from typing import List, Tuple
 from connect4cube.hardware.util import is_a_raspberry
 
 if is_a_raspberry():
     from connect4cube.hardware.cube_led import LedCube
 else:
     from connect4cube.hardware.cube_vpython import VPythonCube
+
+CubeType = List[List[List[Tuple[int, int, int]]]]
+CoordType = Tuple[int, int, int]
 
 
 class Cube:
@@ -21,16 +25,16 @@ class Cube:
             else:
                 self.cube = VPythonCube()
 
-        def set_color(self, x, y, z, r, g, b):
+        def set_color(self, x: int, y: int, z: int, r: int, g: int, b: int) -> None:
             self.cube.set_color(x, y, z, r, g, b)
 
-        def draw(self, cube_buffer):
+        def draw(self, cube_buffer: CubeType) -> None:
             for x in range(5):
                 for y in range(5):
                     for z in range(5):
                         self.cube.set_color(x, y, z, *cube_buffer[x][y][z])
 
-        def show(self):
+        def show(self) -> None:
             self.cube.show()
 
     def __init__(self):
@@ -41,6 +45,6 @@ class Cube:
         return getattr(self.instance, name)
 
 
-def get_empty_cube_buffer():
+def get_empty_cube_buffer() -> CubeType:
     cube_buffer = [[[(0, 0, 0) for _ in range(5)] for _ in range(5)] for _ in range(5)]
     return cube_buffer

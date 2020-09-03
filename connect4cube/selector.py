@@ -1,10 +1,11 @@
 import logging
 
-from connect4cube.hardware.cube import Cube
 from connect4cube.connect4.connect4 import Connect4Demo, Connect4Human
+from connect4cube.hardware.button_events import ButtonEvents, EventEnum
+from connect4cube.hardware.cube import Cube
 from connect4cube.rainbow.rainbow import Rainbow
 from connect4cube.random.random import Random
-from connect4cube.hardware.button_events import ButtonEvents, EventEnum
+from connect4cube.snake.snakegame import SnakeGame
 
 LOG = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ class Selector:
     def __init__(self):
         self.cube = Cube()
         self.button_events = ButtonEvents()
-        self.apps = [Rainbow(), Random(), Connect4Demo(), Connect4Human()]
+        self.apps = [Rainbow(), Random(), Connect4Demo(), Connect4Human(), SnakeGame()]
         self.selected = 0
         self.show_preview()
 
